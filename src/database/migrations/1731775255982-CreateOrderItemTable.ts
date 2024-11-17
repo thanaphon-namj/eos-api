@@ -21,7 +21,7 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
           {
             name: 'variant',
             type: 'varchar',
-            length: '15',
+            length: '20',
           },
           {
             name: 'price',
@@ -39,10 +39,10 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
             name: 'order_id',
             type: 'int',
           },
-          // {
-          //   name: 'menu_id',
-          //   type: 'int',
-          // },
+          {
+            name: 'menu_id',
+            type: 'int',
+          },
         ],
       }),
     );
@@ -58,21 +58,21 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
       }),
     );
 
-    // await queryRunner.createForeignKey(
-    //   'OrderItem',
-    //   new TableForeignKey({
-    //     name: 'fk_order-item_menu_id',
-    //     columnNames: ['menu_id'],
-    //     referencedColumnNames: ['id'],
-    //     referencedTableName: 'Menu',
-    //     onDelete: 'CASCADE',
-    //   }),
-    // );
+    await queryRunner.createForeignKey(
+      'OrderItem',
+      new TableForeignKey({
+        name: 'fk_order-item_menu_id',
+        columnNames: ['menu_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'Menu',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_order_id');
-    // await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_menu_id');
+    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_menu_id');
     await queryRunner.dropTable('OrderItem');
   }
 }
