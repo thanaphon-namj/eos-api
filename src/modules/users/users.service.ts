@@ -20,7 +20,7 @@ export class UsersService {
     user.email = userDto.email;
     user.role = Role.Admin;
     user.created_at = new Date();
-    return await this.userRepository.save(user);
+    return this.userRepository.save(user);
   }
 
   async findOne(username: string): Promise<User> {

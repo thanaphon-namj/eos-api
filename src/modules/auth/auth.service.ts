@@ -14,7 +14,7 @@ export class AuthService {
     if (!(await comparePassword(password, user.password))) {
       throw new UnauthorizedException('Invalid password');
     }
-    return await this.jwtService.signAsync({
+    return this.jwtService.signAsync({
       sub: user.id,
       username: user.username,
     });
