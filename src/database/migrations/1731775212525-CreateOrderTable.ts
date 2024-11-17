@@ -47,6 +47,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             name: 'payment',
             type: 'varchar',
             length: '10',
+            isNullable: true,
           },
           {
             name: 'status',
@@ -60,6 +61,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
           {
             name: 'seller_id',
             type: 'int',
+            isNullable: true,
           },
         ],
       }),
