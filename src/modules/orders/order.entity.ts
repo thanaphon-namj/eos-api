@@ -1,5 +1,19 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum OrderStatus {
+  Created = 'created',
+  Pending = 'pending',
+  Confirmed = 'confirmed',
+  Completed = 'completed',
+  Merged = 'merged',
+  Cancelled = 'cancelled',
+}
+
+export enum PaymentMethod {
+  Cash = 'cash',
+  PromptPay = 'prompt_pay',
+}
+
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
@@ -21,10 +35,10 @@ export class Order {
   total: number;
 
   @Column()
-  payment: string;
+  payment: PaymentMethod;
 
   @Column()
-  status: string;
+  status: OrderStatus;
 
   @Column()
   created_at: Date;
