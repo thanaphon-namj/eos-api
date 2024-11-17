@@ -9,4 +9,8 @@ export class AdminPosService {
   getInbox() {
     return this.ordersService.findAllByStatus(OrderStatus.Confirmed);
   }
+
+  getOrderByReferenceCode(referenceCode: string) {
+    return this.ordersService.findByReferenceCode(referenceCode);
+  }
 }
