@@ -1,5 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from '../modules/admin/users/user.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Order {
@@ -30,6 +29,6 @@ export class Order {
   @Column()
   created_at: Date;
 
-  @ManyToOne(() => User)
-  seller_id: User;
+  @Column()
+  seller_id: number;
 }

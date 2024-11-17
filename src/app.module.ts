@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './modules/admin/users/user.entity';
+import { User } from './modules/users/user.entity';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,6 +19,8 @@ import { DB } from './environments';
       database: DB.NAME,
       entities: [User],
     }),
+    AuthModule,
+    UsersModule,
     AdminModule,
   ],
   controllers: [AppController],
