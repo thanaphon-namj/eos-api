@@ -1,25 +1,25 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'OrderItem' })
-export class OrderItem {
+@Entity({ name: 'Menu' })
+export class Menu {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  variant: string;
+  name: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  image_url: string;
 
   @Column()
   price: number;
 
   @Column()
-  quantity: number;
+  is_active: boolean;
 
   @Column()
-  total: number;
-
-  @Column()
-  order_id: number;
-
-  @Column()
-  menu_id: number;
+  category_id: number;
 }
