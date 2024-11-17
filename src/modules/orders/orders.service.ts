@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, OrderStatus } from './order.entity';
@@ -10,7 +10,21 @@ export class OrdersService {
     private orderRepository: Repository<Order>,
   ) {}
 
+  async findByReferenceCode(referenceCode: string): Promise<any> {
+    const order = await this.orderRepository.findOneBy({
+      reference_code: referenceCode,
+      status: OrderStatus.Confirmed,
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    return order;
+  }
+
   findAllByStatus(status: OrderStatus): Promise<Order[]> {
-    return this.orderRepository.findBy({ status });
+    return this.orderRepository.find({
+      where: {
+        status,
+      },
+      select: ['id', 'reference_code', 'name', 'created_at'],
+    });
   }
 }
