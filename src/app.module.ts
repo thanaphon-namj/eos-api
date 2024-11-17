@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
+import { Order } from './modules/orders/order.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,10 +19,11 @@ import { DB } from './environments';
       username: DB.USERNAME,
       password: DB.PASSWORD,
       database: DB.NAME,
-      entities: [User],
+      entities: [User, Order],
     }),
     AuthModule,
     UsersModule,
+    OrdersModule,
     AdminModule,
   ],
   controllers: [AppController],
