@@ -13,4 +13,8 @@ export class AdminPosService {
   getOrderByReferenceCode(referenceCode: string) {
     return this.ordersService.findByReferenceCode(referenceCode);
   }
+
+  cancelOrder(id: number) {
+    return this.ordersService.cancelOrder(id);
+  }
 }

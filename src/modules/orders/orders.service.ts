@@ -27,4 +27,10 @@ export class OrdersService {
       select: ['id', 'reference_code', 'name', 'created_at'],
     });
   }
+
+  async cancelOrder(id: number): Promise<any> {
+    return this.orderRepository.update(id, {
+      status: OrderStatus.Cancelled,
+    });
+  }
 }
