@@ -14,7 +14,7 @@ export enum PaymentMethod {
   PromptPay = 'prompt_pay',
 }
 
-@Entity()
+@Entity({ name: 'Order' })
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
