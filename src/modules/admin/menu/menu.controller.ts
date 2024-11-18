@@ -54,6 +54,16 @@ export class AdminMenuController {
     }
   }
 
+  @Delete('option/:id')
+  async deleteOption(@Param('id') id: string) {
+    try {
+      await this.adminMenuService.deleteOption(+id);
+      return { success: true };
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
+
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);
