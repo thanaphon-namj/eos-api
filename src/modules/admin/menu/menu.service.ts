@@ -25,6 +25,10 @@ export class AdminMenuService {
     return this.menusService.createOption(option);
   }
 
+  updateOption(id: number, option: any) {
+    return this.menusService.updateOption(id, option);
+  }
+
   createCategory(category: any) {
     return this.menusService.createCategory(category);
   }
