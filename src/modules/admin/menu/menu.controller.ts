@@ -24,6 +24,11 @@ export class AdminMenuController {
     return this.adminMenuService.getAll();
   }
 
+  @Get(':id')
+  getById(@Param('id') id: string) {
+    return this.adminMenuService.getById(+id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() menu: any) {
     return this.adminMenuService.update(+id, menu);

@@ -13,6 +13,10 @@ export class AdminMenuService {
     return this.menusService.getAll();
   }
 
+  getById(id: number) {
+    return this.menusService.findOneById(id);
+  }
+
   update(id: number, menu: any) {
     return this.menusService.update(id, menu);
   }
