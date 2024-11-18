@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config();
 
-const PORT = parseInt(process.env.PORT, 10) || 3000;
+const PORT = parseInt(process.env.APP_PORT, 10) || 3000;
 
 // Database
 const DB_HOST: string = process.env.DB_HOST || 'localhost';
