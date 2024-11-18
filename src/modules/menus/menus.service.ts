@@ -24,6 +24,10 @@ export class MenusService {
     return this.menuRepository.save(menu);
   }
 
+  update(id: number, menuDto: any): Promise<any> {
+    return this.menuRepository.update(id, menuDto);
+  }
+
   createCategory(categoryDto: any): Promise<MenuCategory> {
     const category = new MenuCategory();
     category.name = categoryDto.name;

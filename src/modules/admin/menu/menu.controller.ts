@@ -19,6 +19,11 @@ export class AdminMenuController {
     return this.adminMenuService.create(menu);
   }
 
+  @Put(':id')
+  update(@Param('id') id: string, @Body() menu: any) {
+    return this.adminMenuService.update(+id, menu);
+  }
+
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);
