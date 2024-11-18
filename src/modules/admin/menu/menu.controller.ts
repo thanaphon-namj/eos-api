@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { AdminMenuService } from './menu.service';
 
@@ -15,6 +16,16 @@ export class AdminMenuController {
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);
+  }
+
+  @Put('category/:id')
+  async updateCategory(@Param('id') id: string, @Body() category: any) {
+    try {
+      await this.adminMenuService.updateCategory(+id, category);
+      return { success: true };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Delete('category/:id')
