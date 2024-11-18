@@ -31,6 +31,10 @@ export class MenusService {
     return this.menuRepository.find();
   }
 
+  findOneById(id: number): Promise<Menu> {
+    return this.menuRepository.findOneBy({ id });
+  }
+
   update(id: number, menuDto: any): Promise<any> {
     return this.menuRepository.update(id, menuDto);
   }
