@@ -15,4 +15,8 @@ export class MenusService {
     category.name = categoryDto.name;
     return this.menuCategoryRepository.save(category);
   }
+
+  deleteCategory(id: number): Promise<any> {
+    return this.menuCategoryRepository.delete(id);
+  }
 }
