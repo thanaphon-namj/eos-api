@@ -44,5 +44,8 @@ export class Order {
   created_at: Date;
 
   @Column()
+  updated_at: Date;
+
+  @Column()
   seller_id: number;
 }

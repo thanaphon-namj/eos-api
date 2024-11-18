@@ -49,19 +49,19 @@ export class CreateMenuTable1731775285307 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'Menu',
+      'OrderItem',
       new TableForeignKey({
-        name: 'fk_menu_category_id',
-        columnNames: ['category_id'],
+        name: 'fk_order-item_menu_id',
+        columnNames: ['menu_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'MenuCategory',
+        referencedTableName: 'Menu',
         onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('Menu', 'fk_menu_category_id');
+    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_menu_id');
     await queryRunner.dropTable('Menu');
   }
 }

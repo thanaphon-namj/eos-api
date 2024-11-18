@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateMenuCategoryTable1731775429827
   implements MigrationInterface
@@ -23,9 +28,21 @@ export class CreateMenuCategoryTable1731775429827
         ],
       }),
     );
+
+    await queryRunner.createForeignKey(
+      'Menu',
+      new TableForeignKey({
+        name: 'fk_menu_category_id',
+        columnNames: ['category_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'MenuCategory',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropForeignKey('Menu', 'fk_menu_category_id');
     await queryRunner.dropTable('MenuCategory');
   }
 }

@@ -59,6 +59,11 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             type: 'datetime',
           },
           {
+            name: 'updated_at',
+            type: 'datetime',
+            isNullable: true,
+          },
+          {
             name: 'seller_id',
             type: 'int',
             isNullable: true,
