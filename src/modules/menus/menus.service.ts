@@ -28,6 +28,10 @@ export class MenusService {
     return this.menuRepository.update(id, menuDto);
   }
 
+  delete(id: number): Promise<any> {
+    return this.menuRepository.delete(id);
+  }
+
   createCategory(categoryDto: any): Promise<MenuCategory> {
     const category = new MenuCategory();
     category.name = categoryDto.name;

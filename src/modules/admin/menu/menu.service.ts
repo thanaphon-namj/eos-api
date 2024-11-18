@@ -13,6 +13,10 @@ export class AdminMenuService {
     return this.menusService.update(id, menu);
   }
 
+  delete(id: number) {
+    return this.menusService.delete(id);
+  }
+
   createCategory(category: any) {
     return this.menusService.createCategory(category);
   }
