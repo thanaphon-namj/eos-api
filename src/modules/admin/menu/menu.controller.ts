@@ -39,6 +39,11 @@ export class AdminMenuController {
     }
   }
 
+  @Post()
+  createOption(@Body() option: any) {
+    return this.adminMenuService.createOption(option);
+  }
+
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);

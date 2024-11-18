@@ -12,5 +12,8 @@ export class MenuOption {
   additional_price: number;
 
   @Column()
+  is_active: boolean;
+
+  @Column()
   menu_id: number;
 }

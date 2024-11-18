@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Menu } from './menu.entity';
+import { MenuOption } from './menu-option.entity';
 import { MenuCategory } from './menu-category.entity';
 
 @Injectable()
@@ -9,6 +10,8 @@ export class MenusService {
   constructor(
     @InjectRepository(Menu)
     private menuRepository: Repository<Menu>,
+    @InjectRepository(MenuOption)
+    private menuOptionRepository: Repository<MenuOption>,
     @InjectRepository(MenuCategory)
     private menuCategoryRepository: Repository<MenuCategory>,
   ) {}
@@ -34,6 +37,15 @@ export class MenusService {
 
   delete(id: number): Promise<any> {
     return this.menuRepository.delete(id);
+  }
+
+  createOption(optionDto: any): Promise<MenuOption> {
+    const option = new MenuOption();
+    option.name = optionDto.name;
+    option.additional_price = optionDto.additional_price;
+    option.is_active = optionDto.is_active;
+    option.menu_id = optionDto.menu_id;
+    return this.menuOptionRepository.save(option);
   }
 
   createCategory(categoryDto: any): Promise<MenuCategory> {

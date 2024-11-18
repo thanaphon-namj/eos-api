@@ -28,6 +28,10 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
             default: 0,
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+          },
+          {
             name: 'menu_id',
             type: 'int',
           },
