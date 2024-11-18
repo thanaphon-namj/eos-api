@@ -48,6 +48,10 @@ export class MenusService {
     return this.menuOptionRepository.save(option);
   }
 
+  updateOption(id: number, optionDto: any): Promise<any> {
+    return this.menuOptionRepository.update(id, optionDto);
+  }
+
   createCategory(categoryDto: any): Promise<MenuCategory> {
     const category = new MenuCategory();
     category.name = categoryDto.name;

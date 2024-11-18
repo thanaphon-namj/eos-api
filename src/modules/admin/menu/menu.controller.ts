@@ -39,9 +39,19 @@ export class AdminMenuController {
     }
   }
 
-  @Post()
+  @Post('option')
   createOption(@Body() option: any) {
     return this.adminMenuService.createOption(option);
+  }
+
+  @Put('option/:id')
+  async updateOption(@Param('id') id: string, @Body() option: any) {
+    try {
+      await this.adminMenuService.updateOption(+id, option);
+      return { success: true };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Post('category')
