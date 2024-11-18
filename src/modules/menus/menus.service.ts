@@ -24,6 +24,10 @@ export class MenusService {
     return this.menuRepository.save(menu);
   }
 
+  getAll(): Promise<Menu[]> {
+    return this.menuRepository.find();
+  }
+
   update(id: number, menuDto: any): Promise<any> {
     return this.menuRepository.update(id, menuDto);
   }

@@ -9,6 +9,10 @@ export class AdminMenuService {
     return this.menusService.create(menu);
   }
 
+  getAll() {
+    return this.menusService.getAll();
+  }
+
   update(id: number, menu: any) {
     return this.menusService.update(id, menu);
   }
