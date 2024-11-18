@@ -8,4 +8,8 @@ export class AdminMenuService {
   createCategory(category: any) {
     return this.menusService.createCategory(category);
   }
+
+  deleteCategory(id: number) {
+    return this.menusService.deleteCategory(id);
+  }
 }
