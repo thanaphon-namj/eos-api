@@ -14,6 +14,11 @@ import { AdminMenuService } from './menu.service';
 export class AdminMenuController {
   constructor(private adminMenuService: AdminMenuService) {}
 
+  @Post()
+  create(@Body() menu: any) {
+    return this.adminMenuService.create(menu);
+  }
+
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);

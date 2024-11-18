@@ -5,6 +5,10 @@ import { MenusService } from '../../menus/menus.service';
 export class AdminMenuService {
   constructor(private menusService: MenusService) {}
 
+  create(menu: any) {
+    return this.menusService.create(menu);
+  }
+
   createCategory(category: any) {
     return this.menusService.createCategory(category);
   }
