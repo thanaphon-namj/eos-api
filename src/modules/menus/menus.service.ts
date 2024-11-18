@@ -16,6 +16,10 @@ export class MenusService {
     return this.menuCategoryRepository.save(category);
   }
 
+  getAllCategory(): Promise<MenuCategory[]> {
+    return this.menuCategoryRepository.find();
+  }
+
   updateCategory(id: number, categoryDto: any): Promise<any> {
     return this.menuCategoryRepository.update(id, categoryDto);
   }
