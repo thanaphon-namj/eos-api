@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   InternalServerErrorException,
   Param,
   Post,
@@ -16,6 +17,11 @@ export class AdminMenuController {
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);
+  }
+
+  @Get('category')
+  getAllCategory() {
+    return this.adminMenuService.getAllCategory();
   }
 
   @Put('category/:id')
