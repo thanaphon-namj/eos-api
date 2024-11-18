@@ -52,6 +52,10 @@ export class MenusService {
     return this.menuOptionRepository.update(id, optionDto);
   }
 
+  deleteOption(id: number): Promise<any> {
+    return this.menuOptionRepository.delete(id);
+  }
+
   createCategory(categoryDto: any): Promise<MenuCategory> {
     const category = new MenuCategory();
     category.name = categoryDto.name;
