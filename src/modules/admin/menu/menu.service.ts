@@ -9,8 +9,8 @@ export class AdminMenuService {
     return this.menusService.create(menu);
   }
 
-  getAll() {
-    return this.menusService.getAll();
+  getAll(categoryId: string | null) {
+    return this.menusService.getAll(categoryId);
   }
 
   getById(id: number) {

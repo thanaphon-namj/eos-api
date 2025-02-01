@@ -19,7 +19,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'reference_code',
+            name: 'code',
             type: 'varchar',
             length: '4',
           },
@@ -27,6 +27,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             name: 'name',
             type: 'varchar',
             length: '10',
+            isNullable: true,
           },
           {
             name: 'subtotal',

@@ -19,12 +19,6 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ unique: true })
-  email: string;
-
   @Column()
   role: Role;
-
-  @Column()
-  created_at: Date;
 }

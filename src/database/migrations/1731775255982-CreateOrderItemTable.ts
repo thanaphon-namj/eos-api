@@ -22,6 +22,7 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
             name: 'variant',
             type: 'varchar',
             length: '20',
+            isNullable: true,
           },
           {
             name: 'price',

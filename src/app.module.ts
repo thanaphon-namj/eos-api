@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/users/user.entity';
 import { Order } from './modules/orders/order.entity';
+import { OrderItem } from './modules/orders/order-items.entity';
 import { Menu } from './modules/menus/menu.entity';
 import { MenuOption } from './modules/menus/menu-option.entity';
 import { MenuCategory } from './modules/menus/menu-category.entity';
@@ -23,7 +24,7 @@ import { DB } from './environments';
       username: DB.USERNAME,
       password: DB.PASSWORD,
       database: DB.NAME,
-      entities: [User, Order, Menu, MenuOption, MenuCategory],
+      entities: [User, Order, OrderItem, Menu, MenuOption, MenuCategory],
     }),
     AuthModule,
     UsersModule,

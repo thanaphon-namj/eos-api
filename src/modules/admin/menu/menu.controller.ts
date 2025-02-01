@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { AdminMenuService } from './menu.service';
 
@@ -20,8 +21,13 @@ export class AdminMenuController {
   }
 
   @Get()
-  getAll() {
-    return this.adminMenuService.getAll();
+  getAll(@Query('category_id') categoryId: string | null) {
+    return this.adminMenuService.getAll(categoryId);
+  }
+
+  @Get('category')
+  getAllCategory() {
+    return this.adminMenuService.getAllCategory();
   }
 
   @Get(':id')
@@ -72,11 +78,6 @@ export class AdminMenuController {
   @Post('category')
   createCategory(@Body() category: any) {
     return this.adminMenuService.createCategory(category);
-  }
-
-  @Get('category')
-  getAllCategory() {
-    return this.adminMenuService.getAllCategory();
   }
 
   @Put('category/:id')

@@ -16,19 +16,61 @@ export class MenusService {
     private menuCategoryRepository: Repository<MenuCategory>,
   ) {}
 
-  create(menuDto: any): Promise<Menu> {
+  async create(menuDto: any): Promise<Menu> {
     const menu = new Menu();
     menu.name = menuDto.name;
     menu.description = menuDto.description;
     menu.image_url = menuDto.image_url;
     menu.price = menuDto.price;
-    menu.is_active = menuDto.is_active;
+    menu.is_active = true;
     menu.category_id = menuDto.category_id;
-    return this.menuRepository.save(menu);
+    const menuSaved = await this.menuRepository.save(menu);
+    if (menuDto.options.length > 0) {
+      const menuOptions = menuDto.options.map((option: any) => {
+        const menuOption = new MenuOption();
+        menuOption.name = option.name;
+        menuOption.additional_price = option.additional_price;
+        menuOption.is_active = true;
+        menuOption.menu_id = menuSaved.id;
+        return menuOption;
+      });
+      await this.menuOptionRepository.save(menuOptions);
+    }
+    return menuSaved;
   }
 
-  getAll(): Promise<Menu[]> {
-    return this.menuRepository.find();
+  getAll(categoryId: string | null): Promise<Menu[]> {
+    return this.menuRepository.find({
+      where: categoryId ? { category_id: +categoryId } : null,
+    });
+  }
+
+  async getAllGroupByCategory(): Promise<any> {
+    const menus = await this.menuRepository.find({ relations: ['category'] });
+    return menus.reduce((categories, menu) => {
+      const category = categories.find(
+        (category) => category.id === menu.category_id,
+      );
+      if (!category) {
+        categories.push({
+          ...menu.category,
+          items: [
+            {
+              id: menu.id,
+              name: menu.name,
+              price: menu.price,
+            },
+          ],
+        });
+      } else {
+        category.items.push({
+          id: menu.id,
+          name: menu.name,
+          price: menu.price,
+        });
+      }
+      return categories;
+    }, []);
   }
 
   findOneById(id: number): Promise<Menu> {

@@ -20,7 +20,7 @@ export class Order {
   id: number;
 
   @Column()
-  reference_code: string;
+  code: string;
 
   @Column()
   name: string;

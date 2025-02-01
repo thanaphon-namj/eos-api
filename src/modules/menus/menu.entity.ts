@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { MenuCategory } from './menu-category.entity';
 
 @Entity({ name: 'Menu' })
 export class Menu {
@@ -9,7 +16,13 @@ export class Menu {
   name: string;
 
   @Column()
+  name_en: string;
+
+  @Column()
   description: string;
+
+  @Column()
+  description_en: string;
 
   @Column()
   image_url: string;
@@ -22,4 +35,8 @@ export class Menu {
 
   @Column()
   category_id: number;
+
+  @ManyToOne(() => MenuCategory, (category) => category.id)
+  @JoinColumn({ name: 'category_id' })
+  category: MenuCategory;
 }

@@ -17,9 +17,7 @@ export class UsersService {
     user.username = userDto.username;
     user.password = await hashPassword(userDto.password);
     user.name = userDto.name;
-    user.email = userDto.email;
     user.role = Role.Admin;
-    user.created_at = new Date();
     return this.userRepository.save(user);
   }
 
@@ -27,5 +25,17 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ username });
     if (!user) throw new NotFoundException('User not found');
     return user;
+  }
+
+  findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  update(id: number, user: CreateUserDto): Promise<any> {
+    return this.userRepository.update(id, user);
+  }
+
+  delete(id: number): Promise<any> {
+    return this.userRepository.delete(id);
   }
 }
