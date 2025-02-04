@@ -26,12 +26,12 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
           {
             name: 'additional_price',
             type: 'double',
-            default: 0,
           },
           {
             name: 'group_name',
             type: 'varchar',
             length: '10',
+            isNullable: true,
           },
           {
             name: 'status',

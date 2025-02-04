@@ -1,55 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { MenusService } from '../../menus/menus.service';
+import { MenuService } from '../../menu/menu.service';
 
 @Injectable()
 export class AdminMenuService {
-  constructor(private menusService: MenusService) {}
+  constructor(private menuService: MenuService) {}
 
   create(menu: any) {
-    return this.menusService.create(menu);
+    return this.menuService.create(menu);
   }
 
   getAll() {
-    return this.menusService.getAll();
+    return this.menuService.findAll();
   }
 
   getById(id: number) {
-    return this.menusService.findOneById(id);
+    return this.menuService.findOneById(id);
   }
 
   update(id: number, menu: any) {
-    return this.menusService.update(id, menu);
+    return this.menuService.update(id, menu);
   }
 
   delete(id: number) {
-    return this.menusService.delete(id);
+    return this.menuService.delete(id);
   }
 
   createOption(option: any) {
-    return this.menusService.createOption(option);
+    return this.menuService.createOption(option);
   }
 
   updateOption(id: number, option: any) {
-    return this.menusService.updateOption(id, option);
+    return this.menuService.updateOption(id, option);
   }
 
   deleteOption(id: number) {
-    return this.menusService.deleteOption(id);
+    return this.menuService.deleteOption(id);
   }
 
   createCategory(category: any) {
-    return this.menusService.createCategory(category);
+    return this.menuService.createCategory(category);
   }
 
   getAllCategory() {
-    return this.menusService.getAllCategory();
+    return this.menuService.findAllCategory();
   }
 
   updateCategory(id: number, category: any) {
-    return this.menusService.updateCategory(id, category);
+    return this.menuService.updateCategory(id, category);
   }
 
   deleteCategory(id: number) {
-    return this.menusService.deleteCategory(id);
+    return this.menuService.deleteCategory(id);
   }
 }

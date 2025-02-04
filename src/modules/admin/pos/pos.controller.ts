@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { AdminPosService } from './pos.service';
 
 @Controller('admin/pos')
@@ -10,13 +10,8 @@ export class AdminPosController {
     return this.adminPosService.getInbox();
   }
 
-  @Get('/order/:referenceCode')
-  getOrderByReferenceCode(@Param('referenceCode') referenceCode: string) {
-    return this.adminPosService.getOrderByReferenceCode(referenceCode);
-  }
-
-  @Delete('/orders/:id')
-  cancelOrder(@Param('id') id: string) {
-    return this.adminPosService.cancelOrder(+id);
+  @Get('/:code')
+  getOrderByCode(@Param('code') code: string) {
+    return this.adminPosService.getOrderByCode(code);
   }
 }

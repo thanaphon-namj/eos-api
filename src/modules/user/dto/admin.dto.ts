@@ -1,6 +1,5 @@
-export interface CreateUserDto {
+export interface AdminDto {
   username: string;
   password: string;
   name: string;
-  email: string;
 }

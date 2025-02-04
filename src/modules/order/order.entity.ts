@@ -12,6 +12,8 @@ export enum OrderStatus {
 export enum PaymentMethod {
   Cash = 'cash',
   PromptPay = 'prompt_pay',
+  BankTransfer = 'bank_transfer',
+  CreditCard = 'credit_card',
 }
 
 @Entity({ name: 'Order' })
@@ -20,7 +22,7 @@ export class Order {
   id: number;
 
   @Column()
-  reference_code: string;
+  code: string;
 
   @Column()
   name: string;
@@ -47,5 +49,5 @@ export class Order {
   updated_at: Date;
 
   @Column()
-  seller_id: number;
+  admin_id: number;
 }

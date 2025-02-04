@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Request,
   UseGuards,
@@ -17,7 +15,6 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @HttpCode(HttpStatus.OK)
   login(@Body() login: LoginDto) {
     return this.authService.login(login.username, login.password);
   }
@@ -25,6 +22,6 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard)
   getMe(@Request() req: any) {
-    return req.user;
+    return this.authService.getUser(req.user);
   }
 }

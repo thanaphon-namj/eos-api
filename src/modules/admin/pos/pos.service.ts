@@ -1,20 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { OrdersService } from '../../orders/orders.service';
-import { OrderStatus } from '../../orders/order.entity';
+import { OrderService } from '../../order/order.service';
+import { Order, OrderStatus } from '../../order/order.entity';
 
 @Injectable()
 export class AdminPosService {
-  constructor(private ordersService: OrdersService) {}
+  constructor(private orderService: OrderService) {}
 
-  getInbox() {
-    return this.ordersService.findAllByStatus(OrderStatus.Confirmed);
+  getInbox(): Promise<Order[]> {
+    return this.orderService.findAll({
+      where: {
+        status: OrderStatus.Confirmed,
+      },
+      select: ['id', 'code', 'name'],
+      order: {
+        updated_at: 'DESC',
+      },
+    });
   }
 
-  getOrderByReferenceCode(referenceCode: string) {
-    return this.ordersService.findByReferenceCode(referenceCode);
-  }
-
-  cancelOrder(id: number) {
-    return this.ordersService.cancelOrder(id);
+  getOrderByCode(code: string): Promise<Order> {
+    return this.orderService.findOneBy({
+      code,
+      status: OrderStatus.Confirmed,
+    });
   }
 }

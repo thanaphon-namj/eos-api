@@ -43,11 +43,13 @@ export class CreateMenuTable1731775285307 implements MigrationInterface {
             name: 'image_url',
             type: 'varchar',
             length: '255',
+            isNullable: true,
           },
           {
             name: 'banner_url',
             type: 'varchar',
             length: '255',
+            isNullable: true,
           },
           {
             name: 'price',

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { OrdersModule } from '../orders/orders.module';
-import { MenusModule } from '../menus/menus.module';
+import { OrderModule } from '../order/order.module';
+import { MenuModule } from '../menu/menu.module';
 import { AdminController } from './admin.controller';
 import { AdminPosController } from './pos/pos.controller';
 import { AdminMenuController } from './menu/menu.controller';
@@ -9,7 +9,7 @@ import { AdminPosService } from './pos/pos.service';
 import { AdminMenuService } from './menu/menu.service';
 
 @Module({
-  imports: [OrdersModule, MenusModule],
+  imports: [OrderModule, MenuModule],
   controllers: [AdminController, AdminPosController, AdminMenuController],
   providers: [AdminService, AdminPosService, AdminMenuService],
 })

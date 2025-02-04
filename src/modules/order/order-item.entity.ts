@@ -6,16 +6,13 @@ export class OrderItem {
   id: number;
 
   @Column()
-  variant: string;
-
-  @Column()
-  price: number;
-
-  @Column()
   quantity: number;
 
   @Column()
   total: number;
+
+  @Column()
+  note: string;
 
   @Column()
   order_id: number;

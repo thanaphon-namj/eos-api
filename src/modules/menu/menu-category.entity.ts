@@ -7,4 +7,7 @@ export class MenuCategory {
 
   @Column()
   name: string;
+
+  @Column()
+  priority: number;
 }
