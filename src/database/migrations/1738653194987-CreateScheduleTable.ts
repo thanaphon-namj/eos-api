@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateOrderItemTable1731775255982 implements MigrationInterface {
+export class CreateScheduleTable1738653194987 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'OrderItem',
+        name: 'Schedule',
         columns: [
           {
             name: 'id',
@@ -19,24 +19,16 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'quantity',
-            type: 'int',
+            name: 'execute_time',
+            type: 'datetime',
           },
           {
-            name: 'total',
-            type: 'double',
-          },
-          {
-            name: 'note',
-            type: 'text',
-            isNullable: true,
+            name: 'status',
+            type: 'varchar',
+            length: '10',
           },
           {
             name: 'order_id',
-            type: 'int',
-          },
-          {
-            name: 'menu_id',
             type: 'int',
           },
         ],
@@ -44,9 +36,9 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'OrderItem',
+      'Schedule',
       new TableForeignKey({
-        name: 'fk_order-item_order_id',
+        name: 'fk_schedule_order_id',
         columnNames: ['order_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Order',
@@ -56,7 +48,7 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_order_id');
-    await queryRunner.dropTable('OrderItem');
+    await queryRunner.dropForeignKey('Schedule', 'fk_schedule_order_id');
+    await queryRunner.dropTable('Schedule');
   }
 }
