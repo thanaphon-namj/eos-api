@@ -23,7 +23,11 @@ export class CreateMenuCategoryTable1731775429827
           {
             name: 'name',
             type: 'varchar',
-            length: '30',
+            length: '20',
+          },
+          {
+            name: 'priority',
+            type: 'int',
           },
         ],
       }),

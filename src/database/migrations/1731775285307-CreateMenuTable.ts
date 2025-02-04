@@ -24,21 +24,48 @@ export class CreateMenuTable1731775285307 implements MigrationInterface {
             length: '30',
           },
           {
+            name: 'name_en',
+            type: 'varchar',
+            length: '50',
+            isNullable: true,
+          },
+          {
             name: 'description',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'description_en',
             type: 'text',
             isNullable: true,
           },
           {
             name: 'image_url',
             type: 'varchar',
+            length: '255',
+          },
+          {
+            name: 'banner_url',
+            type: 'varchar',
+            length: '255',
           },
           {
             name: 'price',
             type: 'double',
           },
           {
+            name: 'status',
+            type: 'varchar',
+            length: '10',
+          },
+          {
             name: 'is_active',
             type: 'boolean',
+          },
+          {
+            name: 'is_banner',
+            type: 'boolean',
+            default: false,
           },
           {
             name: 'category_id',

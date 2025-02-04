@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateOrderItemTable1731775255982 implements MigrationInterface {
+export class CreateItemVariantTable1731775263174 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'OrderItem',
+        name: 'ItemVariant',
         columns: [
           {
             name: 'id',
@@ -19,24 +19,11 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'quantity',
+            name: 'item_id',
             type: 'int',
           },
           {
-            name: 'total',
-            type: 'double',
-          },
-          {
-            name: 'note',
-            type: 'text',
-            isNullable: true,
-          },
-          {
-            name: 'order_id',
-            type: 'int',
-          },
-          {
-            name: 'menu_id',
+            name: 'option_id',
             type: 'int',
           },
         ],
@@ -44,19 +31,19 @@ export class CreateOrderItemTable1731775255982 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'OrderItem',
+      'ItemVariant',
       new TableForeignKey({
-        name: 'fk_order-item_order_id',
-        columnNames: ['order_id'],
+        name: 'fk_item-variant_item_id',
+        columnNames: ['item_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'Order',
+        referencedTableName: 'OrderItem',
         onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_order_id');
-    await queryRunner.dropTable('OrderItem');
+    await queryRunner.dropForeignKey('ItemVariant', 'fk_item-variant_item_id');
+    await queryRunner.dropTable('ItemVariant');
   }
 }

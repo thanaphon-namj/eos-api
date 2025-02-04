@@ -19,7 +19,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'reference_code',
+            name: 'code',
             type: 'varchar',
             length: '4',
           },
@@ -64,7 +64,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'seller_id',
+            name: 'admin_id',
             type: 'int',
             isNullable: true,
           },
@@ -75,17 +75,17 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'Order',
       new TableForeignKey({
-        name: 'fk_order_user_seller_id',
-        columnNames: ['seller_id'],
+        name: 'fk_order_admin_id',
+        columnNames: ['admin_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'User',
+        referencedTableName: 'Admin',
         onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('Order', 'fk_order_user_seller_id');
+    await queryRunner.dropForeignKey('Order', 'fk_order_admin_id');
     await queryRunner.dropTable('Order');
   }
 }

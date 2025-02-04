@@ -21,11 +21,22 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
+            length: '20',
           },
           {
             name: 'additional_price',
             type: 'double',
             default: 0,
+          },
+          {
+            name: 'group_name',
+            type: 'varchar',
+            length: '10',
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            length: '10',
           },
           {
             name: 'is_active',
@@ -36,6 +47,17 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
             type: 'int',
           },
         ],
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'ItemVariant',
+      new TableForeignKey({
+        name: 'fk_item-variant_option_id',
+        columnNames: ['option_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'MenuOption',
+        onDelete: 'CASCADE',
       }),
     );
 
@@ -52,6 +74,10 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropForeignKey(
+      'ItemVariant',
+      'fk_item-variant_option_id',
+    );
     await queryRunner.dropForeignKey('MenuOption', 'fk_menu-option_menu_id');
     await queryRunner.dropTable('MenuOption');
   }
