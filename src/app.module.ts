@@ -19,6 +19,7 @@ import { DB } from './environments';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: DB.HOST,
+      url: DB.URL,
       port: DB.PORT,
       username: DB.USERNAME,
       password: DB.PASSWORD,
