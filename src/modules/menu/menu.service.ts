@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { Menu, MenuStatus } from './menu.entity';
 import { MenuOption, OptionStatus } from './menu-option.entity';
 import { MenuCategory } from './menu-category.entity';
@@ -19,7 +24,7 @@ export class MenuService {
     private menuCategoryRepository: Repository<MenuCategory>,
   ) {}
 
-  create(menuDto: MenuDto): Promise<Menu> {
+  async create(menuDto: MenuDto): Promise<Menu> {
     const menu = new Menu();
     menu.name = menuDto.name;
     menu.name_en = menuDto.name_en;
@@ -30,23 +35,56 @@ export class MenuService {
     menu.status = MenuStatus.Available;
     menu.is_active = true;
     menu.category_id = menuDto.category_id;
-    return this.menuRepository.save(menu);
+    const result = await this.menuRepository.save(menu);
+    for await (const optionDto of menuDto.options) {
+      const option = new MenuOption();
+      option.name = optionDto.name;
+      option.additional_price = optionDto.additional_price;
+      option.group_name = optionDto.group_name;
+      option.status = OptionStatus.Available;
+      option.is_active = true;
+      option.menu_id = result.id;
+      await this.menuOptionRepository.save(option);
+    }
+    return result;
   }
 
-  findAll(): Promise<Menu[]> {
-    return this.menuRepository.find();
+  findAll(options?: FindManyOptions<Menu>): Promise<Menu[]> {
+    return this.menuRepository.find(options);
   }
 
-  findOneById(id: number): Promise<Menu> {
-    return this.menuRepository.findOneBy({ id });
+  findOne(options: FindOneOptions<Menu>): Promise<Menu> {
+    return this.menuRepository.findOne(options);
   }
 
-  update(id: number, menuDto: MenuDto): Promise<any> {
-    return this.menuRepository.update(id, menuDto);
+  findOneBy(where: FindOptionsWhere<Menu>): Promise<Menu> {
+    return this.menuRepository.findOneBy(where);
   }
 
-  delete(id: number): Promise<any> {
-    return this.menuRepository.delete(id);
+  async update(id: number, menuDto: MenuDto): Promise<any> {
+    if (menuDto.options) {
+      for await (const optionDto of menuDto.options) {
+        if (optionDto.id) {
+          await this.menuOptionRepository.update(optionDto.id, optionDto);
+        } else {
+          const option = new MenuOption();
+          option.name = optionDto.name;
+          option.additional_price = optionDto.additional_price;
+          option.group_name = optionDto.group_name;
+          option.status = OptionStatus.Available;
+          option.is_active = true;
+          option.menu_id = id;
+          await this.menuOptionRepository.save(option);
+        }
+      }
+    }
+    const result = await this.menuRepository.update(id, menuDto);
+    return result.affected > 0;
+  }
+
+  async delete(id: number): Promise<any> {
+    const result = await this.menuRepository.delete(id);
+    return result.affected > 0;
   }
 
   createOption(optionDto: OptionDto): Promise<MenuOption> {
@@ -60,30 +98,41 @@ export class MenuService {
     return this.menuOptionRepository.save(option);
   }
 
-  updateOption(id: number, optionDto: OptionDto): Promise<any> {
-    return this.menuOptionRepository.update(id, optionDto);
+  async updateOption(id: number, optionDto: OptionDto): Promise<any> {
+    const result = await this.menuOptionRepository.update(id, optionDto);
+    return result.affected > 0;
   }
 
-  deleteOption(id: number): Promise<any> {
-    return this.menuOptionRepository.delete(id);
+  async deleteOption(id: number): Promise<any> {
+    const result = await this.menuOptionRepository.delete(id);
+    return result.affected > 0;
   }
 
-  createCategory(categoryDto: CategoryDto): Promise<MenuCategory> {
+  async createCategory(categoryDto: CategoryDto): Promise<MenuCategory> {
+    const categories = await this.menuCategoryRepository.find({
+      select: ['priority'],
+      order: { priority: 'DESC' },
+      take: 1,
+    });
     const category = new MenuCategory();
     category.name = categoryDto.name;
-    category.priority = categoryDto.priority;
+    category.priority = categories.length > 0 ? categories[0].priority + 1 : 1;
     return this.menuCategoryRepository.save(category);
   }
 
-  findAllCategory(): Promise<MenuCategory[]> {
-    return this.menuCategoryRepository.find();
+  findAllCategory(
+    options?: FindManyOptions<MenuCategory>,
+  ): Promise<MenuCategory[]> {
+    return this.menuCategoryRepository.find(options);
   }
 
-  updateCategory(id: number, categoryDto: CategoryDto): Promise<any> {
-    return this.menuCategoryRepository.update(id, categoryDto);
+  async updateCategory(id: number, categoryDto: CategoryDto): Promise<any> {
+    const result = await this.menuCategoryRepository.update(id, categoryDto);
+    return result.affected > 0;
   }
 
-  deleteCategory(id: number): Promise<any> {
-    return this.menuCategoryRepository.delete(id);
+  async deleteCategory(id: number): Promise<boolean> {
+    const result = await this.menuCategoryRepository.delete(id);
+    return result.affected > 0;
   }
 }

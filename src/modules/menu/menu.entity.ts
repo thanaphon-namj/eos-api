@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { MenuCategory } from './menu-category.entity';
+import { MenuOption } from './menu-option.entity';
 
 export enum MenuStatus {
   Available = 'available',
@@ -28,7 +37,7 @@ export class Menu {
   @Column()
   banner_url: string;
 
-  @Column()
+  @Column({ type: 'decimal' })
   price: number;
 
   @Column()
@@ -42,4 +51,11 @@ export class Menu {
 
   @Column()
   category_id: number;
+
+  @OneToOne(() => MenuCategory)
+  @JoinColumn({ name: 'category_id' })
+  category: MenuCategory;
+
+  @OneToMany(() => MenuOption, (menuOption) => menuOption.menu)
+  options: MenuOption[];
 }

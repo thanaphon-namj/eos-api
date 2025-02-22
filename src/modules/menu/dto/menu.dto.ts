@@ -1,4 +1,5 @@
 import { MenuStatus } from '../menu.entity';
+import { OptionDto } from './option.dto';
 
 export interface MenuDto {
   name: string;
@@ -12,4 +13,5 @@ export interface MenuDto {
   is_active?: boolean;
   is_banner?: boolean;
   category_id: number;
+  options?: OptionDto[];
 }

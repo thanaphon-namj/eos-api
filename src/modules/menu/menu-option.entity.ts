@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Menu } from './menu.entity';
 
 export enum OptionStatus {
   Available = 'available',
@@ -13,7 +20,7 @@ export class MenuOption {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'decimal' })
   additional_price: number;
 
   @Column()
@@ -27,4 +34,8 @@ export class MenuOption {
 
   @Column()
   menu_id: number;
+
+  @ManyToOne(() => Menu, (menu) => menu.options)
+  @JoinColumn({ name: 'menu_id' })
+  menu: Menu;
 }

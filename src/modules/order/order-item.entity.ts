@@ -8,7 +8,7 @@ export class OrderItem {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   total: number;
 
   @Column()

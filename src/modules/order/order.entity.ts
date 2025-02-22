@@ -27,13 +27,13 @@ export class Order {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'decimal' })
   subtotal: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   discount: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   total: number;
 
   @Column()

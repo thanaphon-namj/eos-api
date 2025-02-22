@@ -1,6 +1,7 @@
 import { OptionStatus } from '../menu-option.entity';
 
 export interface OptionDto {
+  id?: number;
   name: string;
   additional_price: number;
   group_name?: string;
