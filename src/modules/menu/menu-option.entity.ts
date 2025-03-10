@@ -9,7 +9,7 @@ import { Menu } from './menu.entity';
 
 export enum OptionStatus {
   Available = 'available',
-  OutOfStock = 'out_of_stock',
+  OutOfStock = 'outofstock',
 }
 
 @Entity({ name: 'MenuOption' })

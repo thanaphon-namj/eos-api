@@ -11,7 +11,7 @@ import { MenuOption } from './menu-option.entity';
 
 export enum MenuStatus {
   Available = 'available',
-  OutOfStock = 'out_of_stock',
+  OutOfStock = 'outofstock',
 }
 
 @Entity({ name: 'Menu' })

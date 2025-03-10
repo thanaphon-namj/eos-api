@@ -1,17 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { Order, OrderStatus } from './order.entity';
+import { OrderItem } from './order-item.entity';
+import { ItemVariant } from './item-variant.entity';
+import { OrderDto } from './dto/order.dto';
+import { OrderItemDto } from '../admin/pos/dto/order.dto';
+import { generateCode } from '../../utils/generate';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
+    @InjectRepository(OrderItem)
+    private orderItemRepository: Repository<OrderItem>,
+    @InjectRepository(ItemVariant)
+    private itemVariantRepository: Repository<ItemVariant>,
   ) {}
+
+  create(orderDto: OrderDto) {
+    const order = new Order();
+    order.code = generateCode();
+    order.name = orderDto.name;
+    order.status = OrderStatus.Created;
+    order.created_at = new Date();
+    return this.orderRepository.save(order);
+  }
 
   findAll(options?: FindManyOptions<Order>): Promise<Order[]> {
     return this.orderRepository.find(options);
+  }
+
+  findOne(options: FindOneOptions<Order>): Promise<Order> {
+    return this.orderRepository.findOne(options);
   }
 
   async findOneBy(where: FindOptionsWhere<Order>): Promise<Order> {
@@ -20,9 +47,82 @@ export class OrderService {
     return order;
   }
 
-  async cancelOrder(id: number): Promise<any> {
-    return this.orderRepository.update(id, {
+  async confirmOrder(id: number): Promise<boolean> {
+    const result = await this.orderRepository.update(id, {
+      status: OrderStatus.Confirmed,
+      updated_at: new Date(),
+    });
+    return result.affected > 0;
+  }
+
+  async cancelOrder(id: number): Promise<boolean> {
+    const result = await this.orderRepository.update(id, {
       status: OrderStatus.Cancelled,
     });
+    return result.affected > 0;
   }
+
+  async createOrderItem(id: number, item: OrderItemDto) {
+    const orderItem = new OrderItem();
+    orderItem.quantity = item.quantity;
+    orderItem.note = item.note;
+    orderItem.order_id = id;
+    orderItem.menu_id = item.id;
+    const result = await this.orderItemRepository.save(orderItem);
+    if (item.options) {
+      for await (const option of item.options) {
+        const itemVariant = new ItemVariant();
+        itemVariant.item_id = result.id;
+        itemVariant.option_id = option;
+        await this.itemVariantRepository.save(itemVariant);
+      }
+    }
+    await this.orderRepository.update(id, { status: OrderStatus.Pending });
+    return result;
+  }
+
+  async updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
+    if (item.options) {
+      await this.itemVariantRepository.delete({ item_id: id });
+      for await (const option of item.options) {
+        const itemVariant = new ItemVariant();
+        itemVariant.item_id = id;
+        itemVariant.option_id = option;
+        await this.itemVariantRepository.save(itemVariant);
+      }
+    }
+    const result = await this.orderItemRepository.update(id, {
+      quantity: item.quantity,
+      note: item.note,
+    });
+    return result.affected > 0;
+  }
+
+  async deleteOrderItem(id: number): Promise<boolean> {
+    const result = await this.orderItemRepository.delete(id);
+    return result.affected > 0;
+  }
+
+  // async calculate(id: number): Promise<any> {
+  //   const items = await this.orderItemRepository.find({
+  //     where: {
+  //       order_id: id,
+  //     },
+  //     relations: ['menu'],
+  //   });
+  //   const total = items.reduce(
+  //     (previous, current) => previous + current.menu.price,
+  //     0,
+  //   );
+  //   await this.itemVariantRepository.find({
+  //     where: {
+  //       item_id: id,
+  //     },
+  //     relations: ['option'],
+  //     // select: ['option.additional_price'],
+  //   });
+  //   await this.orderItemRepository.update(id, {
+  //     total,
+  //   });
+  // }
 }
