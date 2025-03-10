@@ -78,6 +78,16 @@ export class OrderController {
     };
   }
 
+  @Get(':id/calculate')
+  async calculateOrder(@Param('id') id: string) {
+    const success = this.orderService.calculate(Number(id));
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
+
   @Put('item/:id')
   async updateOrderItem(@Param('id') id: string, @Body() item: any) {
     const success = await this.orderService.updateOrderItem(Number(id), item);

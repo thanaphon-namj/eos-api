@@ -4,6 +4,7 @@ import {
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
+  In,
   Repository,
 } from 'typeorm';
 import { Order, OrderStatus } from './order.entity';
@@ -103,26 +104,48 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  // async calculate(id: number): Promise<any> {
-  //   const items = await this.orderItemRepository.find({
-  //     where: {
-  //       order_id: id,
-  //     },
-  //     relations: ['menu'],
-  //   });
-  //   const total = items.reduce(
-  //     (previous, current) => previous + current.menu.price,
-  //     0,
-  //   );
-  //   await this.itemVariantRepository.find({
-  //     where: {
-  //       item_id: id,
-  //     },
-  //     relations: ['option'],
-  //     // select: ['option.additional_price'],
-  //   });
-  //   await this.orderItemRepository.update(id, {
-  //     total,
-  //   });
-  // }
+  async calculate(id: number): Promise<any> {
+    const items = await this.orderItemRepository.find({
+      where: { order_id: id },
+      relations: ['menu'],
+      select: {
+        id: true,
+        quantity: true,
+        menu: { price: true },
+      },
+    });
+    const itemIds = items.map((item) => item.id);
+    const options = await this.itemVariantRepository.find({
+      where: {
+        item_id: In(itemIds),
+      },
+      relations: ['option'],
+      select: {
+        id: true,
+        item_id: true,
+        option: { additional_price: true },
+      },
+    });
+    const optionsByItemId = options.reduce((previous, current) => {
+      if (!previous[current.item_id]) previous[current.item_id] = [];
+      previous[current.item_id].push(current);
+      return previous;
+    }, {});
+    const updatePromises = items.map((item) => {
+      let price = item.menu.price;
+      const itemOptions = optionsByItemId[item.id] || [];
+      price += itemOptions.reduce(
+        (previous: any, current: { option: { additional_price: any } }) =>
+          previous + current.option.additional_price,
+        0,
+      );
+      return this.orderItemRepository.update(item.id, {
+        total: price * item.quantity,
+      });
+    });
+    await Promise.all(updatePromises);
+    const total = await this.orderItemRepository.sum('total', { order_id: id });
+    const result = await this.orderRepository.update(id, { total });
+    return result.affected > 0;
+  }
 }

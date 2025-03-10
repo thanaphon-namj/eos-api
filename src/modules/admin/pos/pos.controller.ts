@@ -40,10 +40,10 @@ export class AdminPosController {
     return this.adminPosService.addOrderItem(Number(id), item);
   }
 
-  // @Get('order/:id/calculate')
-  // calculateOrder(@Param('id') id: string) {
-  //   return this.adminPosService.calculateOrder(Number(id));
-  // }
+  @Get('order/:id/calculate')
+  calculateOrder(@Param('id') id: string) {
+    return this.adminPosService.calculateOrder(Number(id));
+  }
 
   @Put('item/:id')
   async updateOrderItem(@Param('id') id: string, @Body() item: OrderItemDto) {

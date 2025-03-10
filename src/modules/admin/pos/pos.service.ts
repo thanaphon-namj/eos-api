@@ -118,7 +118,7 @@ export class AdminPosService {
     return this.orderService.deleteOrderItem(id);
   }
 
-  // calculateOrder(id: number) {
-  //   return this.orderService.calculate(id);
-  // }
+  calculateOrder(id: number) {
+    return this.orderService.calculate(id);
+  }
 }
