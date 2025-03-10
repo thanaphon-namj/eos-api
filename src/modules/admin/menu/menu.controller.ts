@@ -10,6 +10,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { AdminMenuService } from './menu.service';
+import { MenuDto } from 'src/modules/menu/dto/menu.dto';
+import { OptionDto } from 'src/modules/menu/dto/option.dto';
+import { CategoryDto } from 'src/modules/menu/dto/category.dto';
 import { QueryMenuDto } from './dto/menu.dto';
 
 @Controller('admin/menu')
@@ -17,7 +20,7 @@ export class AdminMenuController {
   constructor(private adminMenuService: AdminMenuService) {}
 
   @Post()
-  create(@Body() menu: any) {
+  create(@Body() menu: MenuDto) {
     return this.adminMenuService.create(menu);
   }
 
@@ -57,12 +60,12 @@ export class AdminMenuController {
   }
 
   @Post('option')
-  createOption(@Body() option: any) {
+  createOption(@Body() option: OptionDto) {
     return this.adminMenuService.createOption(option);
   }
 
   @Put('option/:id')
-  async updateOption(@Param('id') id: string, @Body() option: any) {
+  async updateOption(@Param('id') id: string, @Body() option: OptionDto) {
     const success = await this.adminMenuService.updateOption(
       Number(id),
       option,
@@ -85,12 +88,12 @@ export class AdminMenuController {
   }
 
   @Post('category')
-  createCategory(@Body() category: any) {
+  createCategory(@Body() category: CategoryDto) {
     return this.adminMenuService.createCategory(category);
   }
 
   @Put('category/:id')
-  async updateCategory(@Param('id') id: string, @Body() category: any) {
+  async updateCategory(@Param('id') id: string, @Body() category: CategoryDto) {
     const success = await this.adminMenuService.updateCategory(
       Number(id),
       category,

@@ -82,7 +82,7 @@ export class MenuService {
     return result.affected > 0;
   }
 
-  async delete(id: number): Promise<any> {
+  async delete(id: number): Promise<boolean> {
     const result = await this.menuRepository.delete(id);
     return result.affected > 0;
   }
@@ -98,12 +98,20 @@ export class MenuService {
     return this.menuOptionRepository.save(option);
   }
 
-  async updateOption(id: number, optionDto: OptionDto): Promise<any> {
+  findAllOption(options?: FindManyOptions<MenuOption>): Promise<MenuOption[]> {
+    return this.menuOptionRepository.find(options);
+  }
+
+  findOneOption(options: FindOneOptions<MenuOption>): Promise<MenuOption> {
+    return this.menuOptionRepository.findOne(options);
+  }
+
+  async updateOption(id: number, optionDto: OptionDto): Promise<boolean> {
     const result = await this.menuOptionRepository.update(id, optionDto);
     return result.affected > 0;
   }
 
-  async deleteOption(id: number): Promise<any> {
+  async deleteOption(id: number): Promise<boolean> {
     const result = await this.menuOptionRepository.delete(id);
     return result.affected > 0;
   }
@@ -126,7 +134,7 @@ export class MenuService {
     return this.menuCategoryRepository.find(options);
   }
 
-  async updateCategory(id: number, categoryDto: CategoryDto): Promise<any> {
+  async updateCategory(id: number, categoryDto: CategoryDto): Promise<boolean> {
     const result = await this.menuCategoryRepository.update(id, categoryDto);
     return result.affected > 0;
   }
