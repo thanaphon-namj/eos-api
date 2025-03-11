@@ -123,6 +123,21 @@ export class MenuService {
     return result.affected > 0;
   }
 
+  async reorderCategory(categoryDto: CategoryDto[]): Promise<boolean> {
+    const categories = await this.menuCategoryRepository.find({
+      select: ['id', 'priority'],
+    });
+    for await (const c of categories) {
+      const category = categoryDto.find((d) => d.id === c.id);
+      if (category && category.priority !== c.priority) {
+        await this.menuCategoryRepository.update(category.id, {
+          priority: category.priority,
+        });
+      }
+    }
+    return true;
+  }
+
   async deleteCategory(id: number): Promise<boolean> {
     const result = await this.menuCategoryRepository.delete(id);
     return result.affected > 0;

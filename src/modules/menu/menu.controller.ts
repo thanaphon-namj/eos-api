@@ -36,9 +36,6 @@ export class MenuController {
     const menu = await this.menuService.findOne({
       where: {
         id: Number(id),
-        // options: {
-        //   is_active: true,
-        // },
       },
       relations: ['options'],
       select: [

@@ -71,6 +71,10 @@ export class AdminMenuService {
     return this.menuService.updateCategory(id, category);
   }
 
+  reorderCategory(categories: CategoryDto[]): Promise<boolean> {
+    return this.menuService.reorderCategory(categories);
+  }
+
   deleteCategory(id: number): Promise<boolean> {
     return this.menuService.deleteCategory(id);
   }

@@ -14,6 +14,7 @@ import { MenuDto } from 'src/modules/menu/dto/menu.dto';
 import { OptionDto } from 'src/modules/menu/dto/option.dto';
 import { CategoryDto } from 'src/modules/menu/dto/category.dto';
 import { QueryMenuDto } from './dto/menu.dto';
+import { ReorderCategoryDto } from './dto/category.dto';
 
 @Controller('admin/menu')
 export class AdminMenuController {
@@ -37,6 +38,18 @@ export class AdminMenuController {
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.adminMenuService.getById(Number(id));
+  }
+
+  @Put('category')
+  async reorderCategory(@Body() reorderCategory: ReorderCategoryDto) {
+    const success = await this.adminMenuService.reorderCategory(
+      reorderCategory.categories,
+    );
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Put(':id')
