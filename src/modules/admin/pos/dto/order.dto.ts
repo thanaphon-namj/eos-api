@@ -1,5 +1,5 @@
 export class OrderItemDto {
-  id: number;
+  id?: number;
   quantity: number;
   note?: string;
   options?: number[];
