@@ -53,6 +53,7 @@ export class OrderService {
       status: OrderStatus.Confirmed,
       updated_at: new Date(),
     });
+    await this.calculate(id);
     return result.affected > 0;
   }
 
@@ -78,6 +79,7 @@ export class OrderService {
         await this.itemVariantRepository.save(itemVariant);
       }
     }
+    await this.calculate(id);
     await this.orderRepository.update(id, { status: OrderStatus.Pending });
     return result;
   }
@@ -96,11 +98,17 @@ export class OrderService {
       quantity: item.quantity,
       note: item.note,
     });
+    const { order_id } = await this.orderItemRepository.findOne({
+      where: { id },
+      select: ['order_id'],
+    });
+    await this.calculate(order_id);
     return result.affected > 0;
   }
 
   async deleteOrderItem(id: number): Promise<boolean> {
     const result = await this.orderItemRepository.delete(id);
+    await this.calculate(id);
     return result.affected > 0;
   }
 
@@ -126,24 +134,26 @@ export class OrderService {
         option: { additional_price: true },
       },
     });
-    const optionsByItemId = options.reduce((previous, current) => {
-      if (!previous[current.item_id]) previous[current.item_id] = [];
-      previous[current.item_id].push(current);
-      return previous;
-    }, {});
-    const updatePromises = items.map((item) => {
-      let price = item.menu.price;
-      const itemOptions = optionsByItemId[item.id] || [];
-      price += itemOptions.reduce(
-        (previous: any, current: { option: { additional_price: any } }) =>
-          previous + current.option.additional_price,
-        0,
-      );
-      return this.orderItemRepository.update(item.id, {
-        total: price * item.quantity,
+    if (options.length > 0) {
+      const optionsByItemId = options.reduce((previous, current) => {
+        if (!previous[current.item_id]) previous[current.item_id] = [];
+        previous[current.item_id].push(current);
+        return previous;
+      }, {});
+      const updatePromises = items.map((item) => {
+        let price = item.menu.price;
+        const itemOptions = optionsByItemId[item.id] || [];
+        price += itemOptions.reduce(
+          (previous: any, current: { option: { additional_price: any } }) =>
+            previous + current.option.additional_price,
+          0,
+        );
+        return this.orderItemRepository.update(item.id, {
+          total: price * item.quantity,
+        });
       });
-    });
-    await Promise.all(updatePromises);
+      await Promise.all(updatePromises);
+    }
     const total = await this.orderItemRepository.sum('total', { order_id: id });
     const result = await this.orderRepository.update(id, { total });
     return result.affected > 0;

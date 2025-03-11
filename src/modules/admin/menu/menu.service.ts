@@ -28,6 +28,12 @@ export class AdminMenuService {
     return this.menuService.findOne({
       where: { id },
       relations: ['category', 'options'],
+      order: {
+        options: {
+          group_name: 'DESC',
+          additional_price: 'ASC',
+        },
+      },
     });
   }
 

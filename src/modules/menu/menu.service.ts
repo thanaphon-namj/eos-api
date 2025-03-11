@@ -62,22 +62,6 @@ export class MenuService {
   }
 
   async update(id: number, menuDto: MenuDto): Promise<any> {
-    if (menuDto.options) {
-      for await (const optionDto of menuDto.options) {
-        if (optionDto.id) {
-          await this.menuOptionRepository.update(optionDto.id, optionDto);
-        } else {
-          const option = new MenuOption();
-          option.name = optionDto.name;
-          option.additional_price = optionDto.additional_price;
-          option.group_name = optionDto.group_name;
-          option.status = OptionStatus.Available;
-          option.is_active = true;
-          option.menu_id = id;
-          await this.menuOptionRepository.save(option);
-        }
-      }
-    }
     const result = await this.menuRepository.update(id, menuDto);
     return result.affected > 0;
   }
