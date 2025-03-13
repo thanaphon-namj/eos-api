@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Admin } from './admin.entity';
-import { AdminDto } from './dto/admin.dto';
+import { UserDto } from './dto/user.dto';
 import { hashPassword } from '../../utils/bcrypt';
 
 @Injectable()
@@ -12,11 +12,11 @@ export class UserService {
     private adminRepository: Repository<Admin>,
   ) {}
 
-  async create(adminDto: AdminDto): Promise<Admin> {
+  async create(userDto: UserDto): Promise<Admin> {
     const admin = new Admin();
-    admin.username = adminDto.username;
-    admin.password = await hashPassword(adminDto.password);
-    admin.name = adminDto.name;
+    admin.username = userDto.username;
+    admin.password = await hashPassword(userDto.password);
+    admin.name = userDto.name;
     return this.adminRepository.save(admin);
   }
 
