@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OrderService } from '../../order/order.service';
 import { MenuService } from 'src/modules/menu/menu.service';
 import { Order, OrderStatus } from '../../order/order.entity';
-import { OrderItemDto } from './dto/order.dto';
+import { OrderItemDto } from '../../order/dto/order.dto';
 
 @Injectable()
 export class AdminPosService {

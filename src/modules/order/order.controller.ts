@@ -9,7 +9,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { OrderDto } from './dto/order.dto';
+import { OrderStatus } from './order.entity';
+import { OrderDto, OrderItemDto } from './dto/order.dto';
 import { convertToUid } from '../../utils/generate';
 
 @Controller('order')
@@ -23,8 +24,28 @@ export class OrderController {
   }
 
   @Post(':id')
-  addOrderItem(@Param('id') id: string, @Body() item: any) {
-    return this.orderService.createOrderItem(Number(id), item);
+  async addOrderItem(@Param('id') id: string, @Body() item: OrderItemDto) {
+    const order = await this.orderService.findOne({
+      where: {
+        id: Number(id),
+      },
+      select: ['status'],
+    });
+    if (![OrderStatus.Created, OrderStatus.Pending].includes(order.status)) {
+      throw new InternalServerErrorException("Can't add item.");
+    } else {
+      const success = await this.orderService.createOrderItem(Number(id), item);
+      if (order.status === OrderStatus.Created) {
+        await this.orderService.update(Number(id), {
+          status: OrderStatus.Pending,
+        });
+      }
+      if (success) {
+        return { success: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   @Get(':id')
@@ -108,8 +129,9 @@ export class OrderController {
     const success = await this.orderService.confirmOrder(Number(id));
     if (success) {
       return { success: true };
+    } else {
+      throw new InternalServerErrorException();
     }
-    throw new InternalServerErrorException();
   }
 
   @Delete(':id')

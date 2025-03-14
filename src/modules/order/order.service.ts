@@ -10,8 +10,7 @@ import {
 import { Order, OrderStatus } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { ItemVariant } from './item-variant.entity';
-import { OrderDto } from './dto/order.dto';
-import { OrderItemDto } from '../admin/pos/dto/order.dto';
+import { OrderDto, OrderItemDto } from './dto/order.dto';
 import { generateCode } from '../../utils/generate';
 import { compareArray } from 'src/utils/array';
 
@@ -26,7 +25,7 @@ export class OrderService {
     private itemVariantRepository: Repository<ItemVariant>,
   ) {}
 
-  create(orderDto: OrderDto) {
+  create(orderDto: OrderDto): Promise<Order> {
     const order = new Order();
     order.code = generateCode();
     order.name = orderDto.name;
@@ -49,6 +48,11 @@ export class OrderService {
     return order;
   }
 
+  async update(id: number, orderDto: OrderDto): Promise<boolean> {
+    const result = await this.orderRepository.update(id, orderDto);
+    return result.affected > 0;
+  }
+
   async confirmOrder(id: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Confirmed,
@@ -65,7 +69,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async createOrderItem(id: number, item: OrderItemDto) {
+  async createOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
     const exist = await this.orderItemRepository.findOne({
       where: { order_id: id, menu_id: item.id, note: item.note },
       relations: ['options'],
@@ -121,11 +125,7 @@ export class OrderService {
         await this.itemVariantRepository.save(itemVariant);
       }
     }
-    await this.calculate(id);
-    const result = await this.orderRepository.update(id, {
-      status: OrderStatus.Pending,
-    });
-    return result.affected > 0;
+    return this.calculate(id);
   }
 
   async updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
@@ -160,7 +160,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async calculate(id: number): Promise<any> {
+  async calculate(id: number): Promise<boolean> {
     const items = await this.orderItemRepository.find({
       where: { order_id: id },
       relations: ['menu'],
