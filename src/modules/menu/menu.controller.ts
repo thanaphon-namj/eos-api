@@ -12,7 +12,7 @@ export class MenuController {
         is_active: true,
       },
       relations: ['category'],
-      select: ['id', 'name', 'name_en', 'image_url', 'price'],
+      select: ['id', 'name', 'image_url', 'price'],
       order: {
         category: {
           priority: 'ASC',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OrderService } from '../../order/order.service';
 import { MenuService } from 'src/modules/menu/menu.service';
 import { Order, OrderStatus } from '../../order/order.entity';
-import { OrderItemDto } from '../../order/dto/order.dto';
+import { OrderDto, OrderItemDto } from '../../order/dto/order.dto';
 
 @Injectable()
 export class AdminPosService {
@@ -16,98 +16,170 @@ export class AdminPosService {
       where: {
         status: OrderStatus.Confirmed,
       },
-      select: ['id', 'code', 'name'],
+      select: ['id', 'code', 'name', 'total'],
       order: {
         updated_at: 'DESC',
       },
     });
   }
 
-  getByCode(code: string): Promise<Order> {
-    return this.orderService.findOneBy({
-      code,
-      status: OrderStatus.Confirmed,
+  async getOrderByCode(code: string) {
+    const order = await this.orderService.findOne({
+      where: {
+        code,
+        status: OrderStatus.Confirmed,
+      },
+      relations: [
+        'items',
+        'items.menu',
+        'items.options',
+        'items.options.option',
+      ],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        subtotal: true,
+        discount: true,
+        total: true,
+        payment: true,
+        status: true,
+        items: {
+          id: true,
+          quantity: true,
+          total: true,
+          note: true,
+          menu_id: true,
+          menu: {
+            id: true,
+            name: true,
+          },
+          options: {
+            id: true,
+            item_id: true,
+            option_id: true,
+            option: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     });
+    return {
+      ...order,
+      items: order.items.map((item) => ({
+        ...item,
+        options: item.options.map((option) => option.option),
+      })),
+    };
   }
 
-  async getAllMenu() {
-    const items = await this.menuService.findAll({
+  async getOrderById(id: number) {
+    const order = await this.orderService.findOne({
+      where: {
+        id,
+      },
+      relations: [
+        'items',
+        'items.menu',
+        'items.options',
+        'items.options.option',
+      ],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        subtotal: true,
+        discount: true,
+        total: true,
+        payment: true,
+        status: true,
+        items: {
+          id: true,
+          quantity: true,
+          total: true,
+          note: true,
+          menu_id: true,
+          menu: {
+            id: true,
+            name: true,
+          },
+          options: {
+            id: true,
+            item_id: true,
+            option_id: true,
+            option: {
+              id: true,
+              name: true,
+              additional_price: true,
+              group_name: true,
+            },
+          },
+        },
+      },
+    });
+    return {
+      ...order,
+      items: order.items.map((item) => ({
+        ...item,
+        options: item.options.map((option) => option.option),
+      })),
+    };
+  }
+
+  getAllMenu() {
+    return this.menuService.findAll({
       where: {
         is_active: true,
       },
       relations: ['category'],
-      select: ['id', 'name', 'name_en', 'price'],
+      select: ['id', 'name', 'image_url'],
       order: {
         category: {
           priority: 'ASC',
         },
       },
     });
-    return items.reduce((previous, current) => {
-      const exist = previous.find((item) => item.id === current.category.id);
-      if (exist) {
-        exist.items.push({
-          id: current.id,
-          name: current.name,
-          name_en: current.name_en,
-          price: current.price,
-        });
-      } else {
-        previous.push({
-          id: current.category.id,
-          name: current.category.name,
-          items: [
-            {
-              id: current.id,
-              name: current.name,
-              name_en: current.name_en,
-              price: current.price,
-            },
-          ],
-        });
-      }
-      return previous;
-    }, []);
   }
 
-  async getMenuOptions(id: number) {
-    const options = await this.menuService.findAllOption({
+  async getMenuById(id: number) {
+    const menu = await this.menuService.findOne({
       where: {
-        menu_id: id,
-        is_active: true,
+        id: Number(id),
       },
-      select: ['id', 'name', 'additional_price', 'group_name'],
+      relations: ['options'],
+      select: ['id', 'name', 'price'],
       order: {
-        group_name: 'DESC',
-        additional_price: 'ASC',
+        options: {
+          group_name: 'DESC',
+          additional_price: 'ASC',
+        },
       },
     });
-    return options.reduce((previous, current) => {
-      const exist = previous.find((item) => item.name === current.group_name);
-      if (exist) {
-        exist.items.push({
-          id: current.id,
-          name: current.name,
-          additional_price: current.additional_price,
-        });
-      } else {
-        previous.push({
-          name: current.group_name,
-          items: [
-            {
-              id: current.id,
-              name: current.name,
-              additional_price: current.additional_price,
-            },
-          ],
-        });
-      }
-      return previous;
-    }, []);
+    return {
+      ...menu,
+      options: menu.options.filter((option) => option.is_active),
+    };
+  }
+
+  getAllMenuCategory() {
+    return this.menuService.findAllCategory({
+      select: ['id', 'name'],
+      order: {
+        priority: 'ASC',
+      },
+    });
   }
 
   addOrderItem(id: number, item: OrderItemDto) {
     return this.orderService.createOrderItem(id, item);
+  }
+
+  async updateOrder(id: number, item: OrderDto): Promise<boolean> {
+    const success = await this.orderService.update(id, item);
+    await this.orderService.calculate(id);
+    return success;
   }
 
   updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
@@ -118,7 +190,11 @@ export class AdminPosService {
     return this.orderService.deleteOrderItem(id);
   }
 
-  calculateOrder(id: number) {
-    return this.orderService.calculate(id);
+  completeOrder(id: number, adminId: number): Promise<boolean> {
+    return this.orderService.completeOrder(id, adminId);
+  }
+
+  cancelOrder(id: number): Promise<boolean> {
+    return this.orderService.cancelOrder(id);
   }
 }

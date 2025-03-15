@@ -3,6 +3,7 @@ import { OrderStatus } from '../order.entity';
 export class OrderDto {
   name?: string;
   status?: OrderStatus;
+  admin_id?: number;
 }
 
 export class OrderItemDto {

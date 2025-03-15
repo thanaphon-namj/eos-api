@@ -62,6 +62,14 @@ export class OrderService {
     return result.affected > 0;
   }
 
+  async completeOrder(id: number, adminId: number): Promise<boolean> {
+    const result = await this.orderRepository.update(id, {
+      status: OrderStatus.Completed,
+      admin_id: adminId,
+    });
+    return result.affected > 0;
+  }
+
   async cancelOrder(id: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Cancelled,
@@ -200,8 +208,18 @@ export class OrderService {
       });
     });
     await Promise.all(updatePromises);
-    const total = await this.orderItemRepository.sum('total', { order_id: id });
-    const result = await this.orderRepository.update(id, { total });
+    const subTotal = await this.orderItemRepository.sum('total', {
+      order_id: id,
+    });
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      select: ['discount'],
+    });
+    const total = subTotal - order.discount;
+    const result = await this.orderRepository.update(id, {
+      subtotal: subTotal,
+      total,
+    });
     return result.affected > 0;
   }
 }

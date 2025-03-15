@@ -75,16 +75,16 @@ export class OrderController {
           note: true,
           menu_id: true,
           menu: {
+            id: true,
             name: true,
           },
           options: {
-            item_id: true,
             id: true,
+            item_id: true,
             option_id: true,
             option: {
               id: true,
               name: true,
-              group_name: true,
             },
           },
         },

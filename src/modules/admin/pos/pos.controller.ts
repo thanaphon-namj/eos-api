@@ -9,7 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { AdminPosService } from './pos.service';
-import { OrderItemDto } from '../../order/dto/order.dto';
+import { OrderDto, OrderItemDto } from '../../order/dto/order.dto';
 
 @Controller('admin/pos')
 export class AdminPosController {
@@ -21,18 +21,28 @@ export class AdminPosController {
   }
 
   @Get('menu')
-  getAllMenu() {
-    return this.adminPosService.getAllMenu();
+  async getAllMenu() {
+    const categories = await this.adminPosService.getAllMenuCategory();
+    const items = await this.adminPosService.getAllMenu();
+    return {
+      categories,
+      items,
+    };
+  }
+
+  @Get('menu/:id')
+  getMenuById(@Param('id') id: string) {
+    return this.adminPosService.getMenuById(Number(id));
   }
 
   @Get(':code')
-  getByCode(@Param('code') code: string) {
-    return this.adminPosService.getByCode(code);
+  getOrderByCode(@Param('code') code: string) {
+    return this.adminPosService.getOrderByCode(code);
   }
 
-  @Get('menu/:id/options')
-  getMenuOptions(@Param('id') id: string) {
-    return this.adminPosService.getMenuOptions(Number(id));
+  @Get('order/:id')
+  getOrderById(@Param('id') id: string) {
+    return this.adminPosService.getOrderById(Number(id));
   }
 
   @Post('order/:id')
@@ -40,9 +50,14 @@ export class AdminPosController {
     return this.adminPosService.addOrderItem(Number(id), item);
   }
 
-  @Get('order/:id/calculate')
-  calculateOrder(@Param('id') id: string) {
-    return this.adminPosService.calculateOrder(Number(id));
+  @Put('order/:id')
+  async updateOrder(@Param('id') id: string, @Body() order: OrderDto) {
+    const success = await this.adminPosService.updateOrder(Number(id), order);
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Put('item/:id')
@@ -61,6 +76,29 @@ export class AdminPosController {
   @Delete('item/:id')
   async removeOrderItem(@Param('id') id: string) {
     const success = await this.adminPosService.removeOrderItem(Number(id));
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Post('order/:id/complete')
+  async completeOrder(@Param('id') id: string, @Body() order: OrderDto) {
+    const success = await this.adminPosService.completeOrder(
+      Number(id),
+      order.admin_id,
+    );
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Delete('order/:id')
+  async cancelOrder(@Param('id') id: string) {
+    const success = await this.adminPosService.cancelOrder(Number(id));
     if (success) {
       return { success: true };
     } else {
