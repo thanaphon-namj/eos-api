@@ -6,15 +6,7 @@ export enum OrderStatus {
   Pending = 'pending',
   Confirmed = 'confirmed',
   Completed = 'completed',
-  Merged = 'merged',
   Cancelled = 'cancelled',
-}
-
-export enum PaymentMethod {
-  Cash = 'cash',
-  PromptPay = 'prompt_pay',
-  BankTransfer = 'bank_transfer',
-  CreditCard = 'credit_card',
 }
 
 @Entity({ name: 'Order' })
@@ -36,9 +28,6 @@ export class Order {
 
   @Column({ type: 'decimal' })
   total: number;
-
-  @Column()
-  payment: PaymentMethod;
 
   @Column()
   status: OrderStatus;

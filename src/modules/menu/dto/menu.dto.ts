@@ -5,7 +5,6 @@ export interface MenuDto {
   name: string;
   name_en?: string;
   description?: string;
-  description_en?: string;
   image_url?: string;
   banner_url?: string;
   price: number;

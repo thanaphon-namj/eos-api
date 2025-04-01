@@ -9,5 +9,11 @@ export class MenuCategory {
   name: string;
 
   @Column()
+  image_url: string;
+
+  @Column()
+  banner_url: string;
+
+  @Column()
   priority: number;
 }

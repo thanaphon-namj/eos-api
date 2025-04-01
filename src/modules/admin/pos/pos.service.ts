@@ -42,7 +42,6 @@ export class AdminPosService {
         subtotal: true,
         discount: true,
         total: true,
-        payment: true,
         status: true,
         items: {
           id: true,
@@ -93,7 +92,6 @@ export class AdminPosService {
         subtotal: true,
         discount: true,
         total: true,
-        payment: true,
         status: true,
         items: {
           id: true,

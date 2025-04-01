@@ -29,13 +29,7 @@ export class Menu {
   description: string;
 
   @Column()
-  description_en: string;
-
-  @Column()
   image_url: string;
-
-  @Column()
-  banner_url: string;
 
   @Column({ type: 'decimal' })
   price: number;
@@ -45,9 +39,6 @@ export class Menu {
 
   @Column()
   is_active: boolean;
-
-  @Column()
-  is_banner: boolean;
 
   @Column()
   category_id: number;

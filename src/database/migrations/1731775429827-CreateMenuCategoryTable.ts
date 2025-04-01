@@ -26,6 +26,18 @@ export class CreateMenuCategoryTable1731775429827
             length: '20',
           },
           {
+            name: 'image_url',
+            type: 'varchar',
+            length: '255',
+            isNullable: true,
+          },
+          {
+            name: 'banner_url',
+            type: 'varchar',
+            length: '255',
+            isNullable: true,
+          },
+          {
             name: 'priority',
             type: 'int',
           },

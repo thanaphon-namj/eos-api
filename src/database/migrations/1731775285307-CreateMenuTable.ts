@@ -35,18 +35,7 @@ export class CreateMenuTable1731775285307 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'description_en',
-            type: 'text',
-            isNullable: true,
-          },
-          {
             name: 'image_url',
-            type: 'varchar',
-            length: '255',
-            isNullable: true,
-          },
-          {
-            name: 'banner_url',
             type: 'varchar',
             length: '255',
             isNullable: true,
@@ -63,11 +52,6 @@ export class CreateMenuTable1731775285307 implements MigrationInterface {
           {
             name: 'is_active',
             type: 'boolean',
-          },
-          {
-            name: 'is_banner',
-            type: 'boolean',
-            default: false,
           },
           {
             name: 'category_id',

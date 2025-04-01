@@ -17,6 +17,7 @@ export class CreateSettingTable1738653210390 implements MigrationInterface {
             name: 'name',
             type: 'varchar',
             length: '20',
+            isUnique: true,
           },
           {
             name: 'value',

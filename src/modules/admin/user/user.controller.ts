@@ -9,7 +9,7 @@ export class AdminUserController {
   @Post()
   async create(@Body() user: UserDto) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...rest } = await this.adminUserService.create(user);
-    return rest;
+    const { password, ...args } = await this.adminUserService.create(user);
+    return args;
   }
 }

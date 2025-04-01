@@ -29,7 +29,6 @@ export class MenuService {
     menu.name = menuDto.name;
     menu.name_en = menuDto.name_en;
     menu.description = menuDto.description;
-    menu.description_en = menuDto.description_en;
     menu.image_url = menuDto.image_url;
     menu.price = menuDto.price;
     menu.status = MenuStatus.Available;

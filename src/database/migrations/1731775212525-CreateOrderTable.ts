@@ -44,12 +44,6 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
             default: 0,
           },
           {
-            name: 'payment',
-            type: 'varchar',
-            length: '10',
-            isNullable: true,
-          },
-          {
             name: 'status',
             type: 'varchar',
             length: '10',

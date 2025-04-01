@@ -38,14 +38,7 @@ export class MenuController {
         id: Number(id),
       },
       relations: ['options'],
-      select: [
-        'id',
-        'name',
-        'name_en',
-        'description',
-        'description_en',
-        'price',
-      ],
+      select: ['id', 'name', 'name_en', 'description', 'price'],
       order: {
         options: {
           group_name: 'DESC',

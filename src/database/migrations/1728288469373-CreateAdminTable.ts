@@ -17,6 +17,7 @@ export class CreateAdminTable1728288469373 implements MigrationInterface {
             name: 'username',
             type: 'varchar',
             length: '10',
+            isUnique: true,
           },
           {
             name: 'password',
