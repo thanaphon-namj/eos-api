@@ -3,11 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Admin } from './modules/user/admin.entity';
 import { Order } from './modules/order/order.entity';
 import { OrderItem } from './modules/order/order-item.entity';
-import { ItemVariant } from './modules/order/item-variant.entity';
+import { OrderItemChoice } from './modules/order/order-item-choice.entity';
 import { Menu } from './modules/menu/menu.entity';
 import { MenuOption } from './modules/menu/menu-option.entity';
+import { MenuOptionChoice } from './modules/menu/menu-option-choice.entity';
+import { MenuOptionMapping } from './modules/menu/menu-option-mapping.entity';
 import { MenuCategory } from './modules/menu/menu-category.entity';
-import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { OrderModule } from './modules/order/order.module';
 import { MenuModule } from './modules/menu/menu.module';
@@ -31,13 +32,14 @@ import { DB } from './environments';
         Admin,
         Order,
         OrderItem,
-        ItemVariant,
+        OrderItemChoice,
         Menu,
         MenuOption,
+        MenuOptionChoice,
+        MenuOptionMapping,
         MenuCategory,
       ],
     }),
-    AuthModule,
     UserModule,
     OrderModule,
     MenuModule,

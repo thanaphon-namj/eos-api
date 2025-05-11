@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
+export class CreateMenuTable1730000000005 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'MenuOption',
+        name: 'Menu',
         columns: [
           {
             name: 'id',
@@ -21,18 +21,28 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
-            length: '20',
+            length: '30',
           },
           {
-            name: 'additional_price',
-            type: 'double',
-            default: 0,
-          },
-          {
-            name: 'group_name',
+            name: 'name_en',
             type: 'varchar',
-            length: '10',
+            length: '50',
             isNullable: true,
+          },
+          {
+            name: 'description',
+            type: 'text',
+            isNullable: true,
+          },
+          {
+            name: 'image_url',
+            type: 'varchar',
+            length: '255',
+            isNullable: true,
+          },
+          {
+            name: 'price',
+            type: 'double',
           },
           {
             name: 'status',
@@ -42,30 +52,24 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
           {
             name: 'is_active',
             type: 'boolean',
+            default: true,
           },
           {
-            name: 'menu_id',
+            name: 'is_recommended',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'category_id',
             type: 'int',
           },
         ],
       }),
     );
-
     await queryRunner.createForeignKey(
-      'ItemVariant',
+      'OrderItem',
       new TableForeignKey({
-        name: 'fk_item-variant_option_id',
-        columnNames: ['option_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'MenuOption',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'MenuOption',
-      new TableForeignKey({
-        name: 'fk_menu-option_menu_id',
+        name: 'fk_order-item_menu_id',
         columnNames: ['menu_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Menu',
@@ -75,11 +79,7 @@ export class CreateMenuOptionTable1731775418320 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey(
-      'ItemVariant',
-      'fk_item-variant_option_id',
-    );
-    await queryRunner.dropForeignKey('MenuOption', 'fk_menu-option_menu_id');
-    await queryRunner.dropTable('MenuOption');
+    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_menu_id');
+    await queryRunner.dropTable('Menu');
   }
 }

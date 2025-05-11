@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../user/user.service';
-import { comparePassword } from '../../utils/bcrypt';
+import { UserService } from '../../user/user.service';
+import { comparePassword } from '../../../utils/bcrypt';
 
 @Injectable()
-export class AuthService {
+export class AdminAuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
@@ -22,9 +22,9 @@ export class AuthService {
   }
 
   async getUser(
-    user: any,
+    id: number,
   ): Promise<{ id: number; username: string; name: string }> {
-    const admin = await this.userService.findOneBy({ id: user.sub });
+    const admin = await this.userService.findOneBy({ id });
     return {
       id: admin.id,
       username: admin.username,

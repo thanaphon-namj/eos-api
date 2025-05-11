@@ -6,22 +6,22 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AdminAuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
 
-@Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
+@Controller('admin/auth')
+export class AdminAuthController {
+  constructor(private adminAuthService: AdminAuthService) {}
 
   @Post('login')
   login(@Body() login: LoginDto) {
-    return this.authService.login(login.username, login.password);
+    return this.adminAuthService.login(login.username, login.password);
   }
 
   @Get('me')
   @UseGuards(AuthGuard)
   getMe(@Request() req: any) {
-    return this.authService.getUser(req.user);
+    return this.adminAuthService.getUser(req.user.sub);
   }
 }

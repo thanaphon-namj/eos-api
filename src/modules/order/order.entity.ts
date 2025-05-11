@@ -2,7 +2,6 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderItem } from './order-item.entity';
 
 export enum OrderStatus {
-  Created = 'created',
   Pending = 'pending',
   Confirmed = 'confirmed',
   Completed = 'completed',

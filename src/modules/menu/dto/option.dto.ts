@@ -1,11 +1,9 @@
-import { OptionStatus } from '../menu-option.entity';
+import { MenuOptionChoice } from '../menu-option-choice.entity';
 
 export interface OptionDto {
   id?: number;
   name: string;
-  additional_price: number;
-  group_name?: string;
-  status?: OptionStatus;
-  is_active?: boolean;
-  menu_id: number;
+  is_required?: boolean;
+  allow_multiple?: boolean;
+  choices?: MenuOptionChoice[];
 }

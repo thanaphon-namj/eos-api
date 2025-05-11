@@ -7,9 +7,11 @@ import {
   Repository,
 } from 'typeorm';
 import { Menu, MenuStatus } from './menu.entity';
-import { MenuOption, OptionStatus } from './menu-option.entity';
+import { MenuOption } from './menu-option.entity';
+import { MenuOptionChoice } from './menu-option-choice.entity';
+import { MenuOptionMapping } from './menu-option-mapping.entity';
 import { MenuCategory } from './menu-category.entity';
-import { MenuDto } from './dto/menu.dto';
+import { MenuDto, UpdateMenuDto } from './dto/menu.dto';
 import { OptionDto } from './dto/option.dto';
 import { CategoryDto } from './dto/category.dto';
 
@@ -20,6 +22,10 @@ export class MenuService {
     private menuRepository: Repository<Menu>,
     @InjectRepository(MenuOption)
     private menuOptionRepository: Repository<MenuOption>,
+    @InjectRepository(MenuOptionChoice)
+    private menuOptionChoiceRepository: Repository<MenuOptionChoice>,
+    @InjectRepository(MenuOptionMapping)
+    private menuOptionMappingRepository: Repository<MenuOptionMapping>,
     @InjectRepository(MenuCategory)
     private menuCategoryRepository: Repository<MenuCategory>,
   ) {}
@@ -32,18 +38,13 @@ export class MenuService {
     menu.image_url = menuDto.image_url;
     menu.price = menuDto.price;
     menu.status = MenuStatus.Available;
-    menu.is_active = true;
     menu.category_id = menuDto.category_id;
     const result = await this.menuRepository.save(menu);
-    for await (const optionDto of menuDto.options) {
-      const option = new MenuOption();
-      option.name = optionDto.name;
-      option.additional_price = optionDto.additional_price;
-      option.group_name = optionDto.group_name;
-      option.status = OptionStatus.Available;
-      option.is_active = true;
+    for await (const optionId of menuDto.options) {
+      const option = new MenuOptionMapping();
       option.menu_id = result.id;
-      await this.menuOptionRepository.save(option);
+      option.option_id = optionId;
+      await this.menuOptionMappingRepository.save(option);
     }
     return result;
   }
@@ -60,8 +61,8 @@ export class MenuService {
     return this.menuRepository.findOneBy(where);
   }
 
-  async update(id: number, menuDto: MenuDto): Promise<any> {
-    const result = await this.menuRepository.update(id, menuDto);
+  async update(id: number, menu: UpdateMenuDto): Promise<any> {
+    const result = await this.menuRepository.update(id, menu);
     return result.affected > 0;
   }
 
@@ -70,15 +71,21 @@ export class MenuService {
     return result.affected > 0;
   }
 
-  createOption(optionDto: OptionDto): Promise<MenuOption> {
+  async createOption(optionDto: OptionDto): Promise<MenuOption> {
     const option = new MenuOption();
     option.name = optionDto.name;
-    option.additional_price = optionDto.additional_price;
-    option.group_name = optionDto.group_name;
-    option.status = OptionStatus.Available;
-    option.is_active = true;
-    option.menu_id = optionDto.menu_id;
-    return this.menuOptionRepository.save(option);
+    option.is_required = optionDto.is_required;
+    option.allow_multiple = optionDto.allow_multiple;
+    const result = await this.menuOptionRepository.save(option);
+    for (const choice of optionDto.choices) {
+      const menuOptionChoice = new MenuOptionChoice();
+      menuOptionChoice.name = choice.name;
+      menuOptionChoice.additional_price = choice.additional_price;
+      menuOptionChoice.status = MenuStatus.Available;
+      menuOptionChoice.option_id = result.id;
+      await this.menuOptionChoiceRepository.save(menuOptionChoice);
+    }
+    return result;
   }
 
   findAllOption(options?: FindManyOptions<MenuOption>): Promise<MenuOption[]> {
@@ -100,14 +107,20 @@ export class MenuService {
   }
 
   async createCategory(categoryDto: CategoryDto): Promise<MenuCategory> {
-    const categories = await this.menuCategoryRepository.find({
+    const result = await this.menuCategoryRepository.findOne({
+      where: {
+        parent_id: categoryDto.parent_id,
+      },
       select: ['priority'],
-      order: { priority: 'DESC' },
-      take: 1,
+      order: {
+        priority: 'DESC',
+      },
     });
     const category = new MenuCategory();
     category.name = categoryDto.name;
-    category.priority = categories.length > 0 ? categories[0].priority + 1 : 1;
+    category.image_url = categoryDto.image_url;
+    category.priority = result ? result.priority + 1 : 1;
+    if (categoryDto.parent_id) category.parent_id = categoryDto.parent_id;
     return this.menuCategoryRepository.save(category);
   }
 

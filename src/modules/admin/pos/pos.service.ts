@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Between } from 'typeorm';
 import { OrderService } from '../../order/order.service';
-import { MenuService } from 'src/modules/menu/menu.service';
-import { Order, OrderStatus } from '../../order/order.entity';
+import { MenuService } from '../../menu/menu.service';
+import { OrderStatus } from '../../order/order.entity';
 import { OrderDto, OrderItemDto } from '../../order/dto/order.dto';
+import { QueryDto } from '../order/dto/query.dto';
+import { getEndOfDay, getStartOfDay } from '../../../utils/date';
 
 @Injectable()
 export class AdminPosService {
@@ -11,119 +14,34 @@ export class AdminPosService {
     private menuService: MenuService,
   ) {}
 
-  getInbox(): Promise<Order[]> {
-    return this.orderService.findAll({
+  async getStats() {
+    const result = await this.orderService.findAll({
       where: {
-        status: OrderStatus.Confirmed,
+        created_at: Between(getStartOfDay(), getEndOfDay()),
       },
-      select: ['id', 'code', 'name', 'total'],
-      order: {
-        updated_at: 'DESC',
-      },
+      select: ['status'],
     });
+    const stats = Object.fromEntries(
+      [
+        OrderStatus.Pending,
+        OrderStatus.Confirmed,
+        OrderStatus.Completed,
+        OrderStatus.Cancelled,
+      ].map((status) => [status, 0]),
+    );
+    for (const order of result) {
+      if (stats[order.status] !== undefined) {
+        stats[order.status]++;
+      }
+    }
+    return stats;
   }
 
-  async getOrderByCode(code: string) {
-    const order = await this.orderService.findOne({
-      where: {
-        code,
-        status: OrderStatus.Confirmed,
-      },
-      relations: [
-        'items',
-        'items.menu',
-        'items.options',
-        'items.options.option',
-      ],
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        subtotal: true,
-        discount: true,
-        total: true,
-        status: true,
-        items: {
-          id: true,
-          quantity: true,
-          total: true,
-          note: true,
-          menu_id: true,
-          menu: {
-            id: true,
-            name: true,
-          },
-          options: {
-            id: true,
-            item_id: true,
-            option_id: true,
-            option: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
+  getInbox(query: QueryDto) {
+    return this.orderService.findAllBy({
+      status: query.status,
+      created_at: Between(getStartOfDay(), getEndOfDay()),
     });
-    return {
-      ...order,
-      items: order.items.map((item) => ({
-        ...item,
-        options: item.options.map((option) => option.option),
-      })),
-    };
-  }
-
-  async getOrderById(id: number) {
-    const order = await this.orderService.findOne({
-      where: {
-        id,
-      },
-      relations: [
-        'items',
-        'items.menu',
-        'items.options',
-        'items.options.option',
-      ],
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        subtotal: true,
-        discount: true,
-        total: true,
-        status: true,
-        items: {
-          id: true,
-          quantity: true,
-          total: true,
-          note: true,
-          menu_id: true,
-          menu: {
-            id: true,
-            name: true,
-          },
-          options: {
-            id: true,
-            item_id: true,
-            option_id: true,
-            option: {
-              id: true,
-              name: true,
-              additional_price: true,
-              group_name: true,
-            },
-          },
-        },
-      },
-    });
-    return {
-      ...order,
-      items: order.items.map((item) => ({
-        ...item,
-        options: item.options.map((option) => option.option),
-      })),
-    };
   }
 
   getAllMenu() {
@@ -148,16 +66,17 @@ export class AdminPosService {
       },
       relations: ['options'],
       select: ['id', 'name', 'price'],
-      order: {
-        options: {
-          group_name: 'DESC',
-          additional_price: 'ASC',
-        },
-      },
+      // เปลี่ยนเป็น choice
+      // order: {
+      //   options: {
+      //     group_name: 'DESC',
+      //     additional_price: 'ASC',
+      //   },
+      // },
     });
     return {
       ...menu,
-      options: menu.options.filter((option) => option.is_active),
+      // options: menu.options.filter((option) => option.is_active),
     };
   }
 
@@ -186,13 +105,5 @@ export class AdminPosService {
 
   removeOrderItem(id: number): Promise<boolean> {
     return this.orderService.deleteOrderItem(id);
-  }
-
-  completeOrder(id: number, adminId: number): Promise<boolean> {
-    return this.orderService.completeOrder(id, adminId);
-  }
-
-  cancelOrder(id: number): Promise<boolean> {
-    return this.orderService.cancelOrder(id);
   }
 }

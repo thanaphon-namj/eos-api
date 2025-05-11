@@ -4,7 +4,7 @@ import { MenuService } from '../../menu/menu.service';
 import { MenuDto } from '../../menu/dto/menu.dto';
 import { OptionDto } from '../../menu/dto/option.dto';
 import { CategoryDto } from '../../menu/dto/category.dto';
-import { QueryMenuDto } from './dto/menu.dto';
+import { QueryDto } from './dto/query.dto';
 
 @Injectable()
 export class AdminMenuService {
@@ -14,11 +14,11 @@ export class AdminMenuService {
     return this.menuService.create(menu);
   }
 
-  getAll(queryDto: QueryMenuDto) {
+  getAll(query: QueryDto) {
     return this.menuService.findAll({
       where: {
-        name: Like(`%${queryDto.q}%`),
-        category_id: queryDto.category_id,
+        name: Like(`%${query.q}%`),
+        // category_id: queryDto.category_id,
       },
       select: ['id', 'name', 'image_url'],
     });
@@ -27,11 +27,45 @@ export class AdminMenuService {
   getById(id: number) {
     return this.menuService.findOne({
       where: { id },
-      relations: ['category', 'options'],
+      relations: ['category', 'category.parent', 'options.option.choices'],
+      select: {
+        id: true,
+        name: true,
+        name_en: true,
+        description: true,
+        price: true,
+        image_url: true,
+        status: true,
+        is_active: true,
+        is_recommended: true,
+        category: {
+          id: true,
+          name: true,
+          parent: {
+            id: true,
+            name: true,
+          },
+        },
+        options: {
+          option_id: true,
+          option: {
+            id: true,
+            name: true,
+            choices: {
+              id: true,
+              name: true,
+              additional_price: true,
+            },
+          },
+        },
+      },
       order: {
         options: {
-          group_name: 'DESC',
-          additional_price: 'ASC',
+          option: {
+            choices: {
+              additional_price: 'ASC',
+            },
+          },
         },
       },
     });
@@ -49,6 +83,28 @@ export class AdminMenuService {
     return this.menuService.createOption(option);
   }
 
+  getAllOption() {
+    return this.menuService.findAllOption({
+      relations: ['choices'],
+      select: {
+        id: true,
+        name: true,
+        is_required: true,
+        allow_multiple: true,
+        choices: {
+          id: true,
+          name: true,
+          additional_price: true,
+        },
+      },
+      order: {
+        choices: {
+          additional_price: 'ASC',
+        },
+      },
+    });
+  }
+
   updateOption(id: number, option: OptionDto): Promise<boolean> {
     return this.menuService.updateOption(id, option);
   }
@@ -63,7 +119,11 @@ export class AdminMenuService {
 
   getAllCategory() {
     return this.menuService.findAllCategory({
-      order: { priority: 'ASC' },
+      select: ['id', 'name', 'image_url', 'parent_id'],
+      order: {
+        priority: 'ASC',
+        parent_id: 'ASC',
+      },
     });
   }
 

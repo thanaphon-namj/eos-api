@@ -31,6 +31,33 @@ export class MenuController {
     });
   }
 
+  @Get('recommended')
+  getAllRecommended() {
+    return this.menuService.findAll({
+      where: {
+        is_active: true,
+        is_recommended: true,
+      },
+      relations: ['category'],
+      select: {
+        id: true,
+        name: true,
+        name_en: true,
+        image_url: true,
+        price: true,
+        category: {
+          id: true,
+          name: true,
+        },
+      },
+      order: {
+        category: {
+          priority: 'ASC',
+        },
+      },
+    });
+  }
+
   @Get(':id')
   async getById(@Param('id') id: string) {
     const menu = await this.menuService.findOne({
@@ -39,16 +66,16 @@ export class MenuController {
       },
       relations: ['options'],
       select: ['id', 'name', 'name_en', 'description', 'price'],
-      order: {
-        options: {
-          group_name: 'DESC',
-          additional_price: 'ASC',
-        },
-      },
+      // order: {
+      //   options: {
+      //     group_name: 'DESC',
+      //     additional_price: 'ASC',
+      //   },
+      // },
     });
     return {
       ...menu,
-      options: menu.options.filter((option) => option.is_active),
+      // options: menu.options.filter((option) => option.is_active),
     };
   }
 }

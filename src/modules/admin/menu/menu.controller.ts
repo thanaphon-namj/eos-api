@@ -8,26 +8,34 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminMenuService } from './menu.service';
-import { MenuDto } from 'src/modules/menu/dto/menu.dto';
-import { OptionDto } from 'src/modules/menu/dto/option.dto';
-import { CategoryDto } from 'src/modules/menu/dto/category.dto';
-import { QueryMenuDto } from './dto/menu.dto';
+import { MenuDto } from '../../menu/dto/menu.dto';
+import { OptionDto } from '../../menu/dto/option.dto';
+import { CategoryDto } from '../../menu/dto/category.dto';
+import { QueryDto } from './dto/query.dto';
 import { ReorderCategoryDto } from './dto/category.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('admin/menu')
 export class AdminMenuController {
   constructor(private adminMenuService: AdminMenuService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() menu: MenuDto) {
     return this.adminMenuService.create(menu);
   }
 
   @Get()
-  getAll(@Query() queryDto: QueryMenuDto) {
-    return this.adminMenuService.getAll(queryDto);
+  getAll(@Query() query: QueryDto) {
+    return this.adminMenuService.getAll(query);
+  }
+
+  @Get('option')
+  getAllOption() {
+    return this.adminMenuService.getAllOption();
   }
 
   @Get('category')
@@ -36,8 +44,12 @@ export class AdminMenuController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return this.adminMenuService.getById(Number(id));
+  async getById(@Param('id') id: string) {
+    const menu = await this.adminMenuService.getById(Number(id));
+    return {
+      ...menu,
+      options: menu.options.map((option) => option.option),
+    };
   }
 
   @Put('category')
@@ -101,6 +113,7 @@ export class AdminMenuController {
   }
 
   @Post('category')
+  @UseGuards(AuthGuard)
   createCategory(@Body() category: CategoryDto) {
     return this.adminMenuService.createCategory(category);
   }

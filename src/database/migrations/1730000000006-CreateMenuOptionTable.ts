@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateSettingTable1738653210390 implements MigrationInterface {
+export class CreateMenuOptionTable1730000000006 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'Setting',
+        name: 'MenuOption',
         columns: [
           {
             name: 'id',
@@ -17,12 +17,16 @@ export class CreateSettingTable1738653210390 implements MigrationInterface {
             name: 'name',
             type: 'varchar',
             length: '20',
-            isUnique: true,
           },
           {
-            name: 'value',
-            type: 'varchar',
-            length: '255',
+            name: 'is_required',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'allow_multiple',
+            type: 'boolean',
+            default: false,
           },
         ],
       }),
@@ -30,6 +34,6 @@ export class CreateSettingTable1738653210390 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('Setting');
+    await queryRunner.dropTable('MenuOption');
   }
 }

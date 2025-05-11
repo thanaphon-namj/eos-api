@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'MenuCategory' })
 export class MenuCategory {
@@ -16,4 +22,11 @@ export class MenuCategory {
 
   @Column()
   priority: number;
+
+  @Column()
+  parent_id: number;
+
+  @OneToOne(() => MenuCategory)
+  @JoinColumn({ name: 'parent_id' })
+  parent: MenuCategory;
 }

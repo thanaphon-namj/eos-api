@@ -25,26 +25,11 @@ export class OrderController {
 
   @Post(':id')
   async addOrderItem(@Param('id') id: string, @Body() item: OrderItemDto) {
-    const order = await this.orderService.findOne({
-      where: {
-        id: Number(id),
-      },
-      select: ['status'],
-    });
-    if (![OrderStatus.Created, OrderStatus.Pending].includes(order.status)) {
-      throw new InternalServerErrorException("Can't add item.");
+    const success = await this.orderService.createOrderItem(Number(id), item);
+    if (success) {
+      return { success: true };
     } else {
-      const success = await this.orderService.createOrderItem(Number(id), item);
-      if (order.status === OrderStatus.Created) {
-        await this.orderService.update(Number(id), {
-          status: OrderStatus.Pending,
-        });
-      }
-      if (success) {
-        return { success: true };
-      } else {
-        throw new InternalServerErrorException();
-      }
+      throw new InternalServerErrorException();
     }
   }
 
@@ -74,19 +59,19 @@ export class OrderController {
           total: true,
           note: true,
           menu_id: true,
-          menu: {
-            id: true,
-            name: true,
-          },
-          options: {
-            id: true,
-            item_id: true,
-            option_id: true,
-            option: {
-              id: true,
-              name: true,
-            },
-          },
+          // menu: {
+          //   id: true,
+          //   name: true,
+          // },
+          // options: {
+          //   id: true,
+          //   item_id: true,
+          //   option_id: true,
+          //   option: {
+          //     id: true,
+          //     name: true,
+          //   },
+          // },
         },
       },
     });
@@ -94,7 +79,8 @@ export class OrderController {
       ...order,
       items: order.items.map((item) => ({
         ...item,
-        options: item.options.map((option) => option.option),
+        // options: item.options.map((option) => option.option),
+        // เปลี่ยนเป็น choice
       })),
     };
   }

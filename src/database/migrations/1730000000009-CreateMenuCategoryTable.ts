@@ -5,7 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateMenuCategoryTable1731775429827
+export class CreateMenuCategoryTable1730000000009
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -41,10 +41,14 @@ export class CreateMenuCategoryTable1731775429827
             name: 'priority',
             type: 'int',
           },
+          {
+            name: 'parent_id',
+            type: 'int',
+            isNullable: true,
+          },
         ],
       }),
     );
-
     await queryRunner.createForeignKey(
       'Menu',
       new TableForeignKey({
@@ -55,10 +59,24 @@ export class CreateMenuCategoryTable1731775429827
         onDelete: 'CASCADE',
       }),
     );
+    await queryRunner.createForeignKey(
+      'MenuCategory',
+      new TableForeignKey({
+        name: 'fk_menu-category_parent_id',
+        columnNames: ['parent_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'MenuCategory',
+        onDelete: 'SET NULL',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey('Menu', 'fk_menu_category_id');
+    await queryRunner.dropForeignKey(
+      'MenuCategory',
+      'fk_menu-category_parent_id',
+    );
     await queryRunner.dropTable('MenuCategory');
   }
 }

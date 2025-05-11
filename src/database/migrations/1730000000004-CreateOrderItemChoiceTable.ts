@@ -5,35 +5,31 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateItemVariantTable1731775263174 implements MigrationInterface {
+export class CreateOrderItemChoiceTable1730000000004
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'ItemVariant',
+        name: 'OrderItemChoice',
         columns: [
-          {
-            name: 'id',
-            type: 'int',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-          },
           {
             name: 'item_id',
             type: 'int',
+            isPrimary: true,
           },
           {
-            name: 'option_id',
+            name: 'choice_id',
             type: 'int',
+            isPrimary: true,
           },
         ],
       }),
     );
-
     await queryRunner.createForeignKey(
-      'ItemVariant',
+      'OrderItemChoice',
       new TableForeignKey({
-        name: 'fk_item-variant_item_id',
+        name: 'fk_order-item-choice_item_id',
         columnNames: ['item_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'OrderItem',
@@ -43,7 +39,10 @@ export class CreateItemVariantTable1731775263174 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('ItemVariant', 'fk_item-variant_item_id');
-    await queryRunner.dropTable('ItemVariant');
+    await queryRunner.dropForeignKey(
+      'OrderItemChoice',
+      'fk_order-item-choice_item_id',
+    );
+    await queryRunner.dropTable('OrderItemChoice');
   }
 }

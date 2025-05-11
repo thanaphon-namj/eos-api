@@ -5,7 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateOrderTable1731775212525 implements MigrationInterface {
+export class CreateOrderTable1730000000002 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -26,7 +26,7 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
-            length: '10',
+            length: '30',
           },
           {
             name: 'subtotal',
@@ -65,7 +65,6 @@ export class CreateOrderTable1731775212525 implements MigrationInterface {
         ],
       }),
     );
-
     await queryRunner.createForeignKey(
       'Order',
       new TableForeignKey({

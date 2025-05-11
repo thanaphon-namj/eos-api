@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Menu } from '../menu/menu.entity';
-import { ItemVariant } from './item-variant.entity';
+import { OrderItemChoice } from './order-item-choice.entity';
 
 @Entity({ name: 'OrderItem' })
 export class OrderItem {
@@ -39,6 +39,6 @@ export class OrderItem {
   @JoinColumn({ name: 'menu_id' })
   menu: Menu;
 
-  @OneToMany(() => ItemVariant, (itemVariant) => itemVariant.item)
-  options: ItemVariant[];
+  @OneToMany(() => OrderItemChoice, (orderItemChoice) => orderItemChoice.item)
+  choices: OrderItemChoice[];
 }

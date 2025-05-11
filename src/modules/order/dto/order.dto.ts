@@ -10,5 +10,6 @@ export class OrderItemDto {
   id?: number;
   quantity: number;
   note?: string;
+  choices?: number[];
   options?: number[];
 }

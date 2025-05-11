@@ -13,4 +13,7 @@ export class Admin {
 
   @Column()
   name: string;
+
+  @Column()
+  role: string;
 }

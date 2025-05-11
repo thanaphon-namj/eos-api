@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 
-export const generateCode = () => {
-  return crypto.randomInt(1000, 9999).toString();
+export const generateCode = (value: string, length: number = 4) => {
+  return String(Number(value) + 1).padStart(length, '0');
 };
 
 export const randomByte = (length: number) => {

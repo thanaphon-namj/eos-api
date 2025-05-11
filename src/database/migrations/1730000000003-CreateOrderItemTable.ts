@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class CreateScheduleTable1738653194987 implements MigrationInterface {
+export class CreateOrderItemTable1730000000003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'Schedule',
+        name: 'OrderItem',
         columns: [
           {
             name: 'id',
@@ -19,26 +19,33 @@ export class CreateScheduleTable1738653194987 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'execute_time',
-            type: 'datetime',
+            name: 'quantity',
+            type: 'int',
           },
           {
-            name: 'status',
-            type: 'varchar',
-            length: '10',
+            name: 'total',
+            type: 'double',
+          },
+          {
+            name: 'note',
+            type: 'text',
+            isNullable: true,
           },
           {
             name: 'order_id',
             type: 'int',
           },
+          {
+            name: 'menu_id',
+            type: 'int',
+          },
         ],
       }),
     );
-
     await queryRunner.createForeignKey(
-      'Schedule',
+      'OrderItem',
       new TableForeignKey({
-        name: 'fk_schedule_order_id',
+        name: 'fk_order-item_order_id',
         columnNames: ['order_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Order',
@@ -48,7 +55,7 @@ export class CreateScheduleTable1738653194987 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('Schedule', 'fk_schedule_order_id');
-    await queryRunner.dropTable('Schedule');
+    await queryRunner.dropForeignKey('OrderItem', 'fk_order-item_order_id');
+    await queryRunner.dropTable('OrderItem');
   }
 }

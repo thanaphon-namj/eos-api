@@ -1,16 +1,5 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Menu } from './menu.entity';
-
-export enum OptionStatus {
-  Available = 'available',
-  OutOfStock = 'outofstock',
-}
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { MenuOptionChoice } from './menu-option-choice.entity';
 
 @Entity({ name: 'MenuOption' })
 export class MenuOption {
@@ -20,22 +9,12 @@ export class MenuOption {
   @Column()
   name: string;
 
-  @Column({ type: 'decimal' })
-  additional_price: number;
+  @Column()
+  is_required: boolean;
 
   @Column()
-  group_name: string;
+  allow_multiple: boolean;
 
-  @Column()
-  status: OptionStatus;
-
-  @Column()
-  is_active: boolean;
-
-  @Column()
-  menu_id: number;
-
-  @ManyToOne(() => Menu, (menu) => menu.options)
-  @JoinColumn({ name: 'menu_id' })
-  menu: Menu;
+  @OneToMany(() => MenuOptionChoice, (choice) => choice.option)
+  choices: MenuOptionChoice[];
 }
