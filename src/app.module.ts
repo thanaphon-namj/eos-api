@@ -28,6 +28,10 @@ import { DB } from './environments';
       username: DB.USERNAME,
       password: DB.PASSWORD,
       database: DB.NAME,
+      ssl: {
+        rejectUnauthorized: false,
+        ca: DB.SSL.CA,
+      },
       entities: [
         Admin,
         Order,

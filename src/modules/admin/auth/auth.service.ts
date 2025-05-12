@@ -23,12 +23,13 @@ export class AdminAuthService {
 
   async getUser(
     id: number,
-  ): Promise<{ id: number; username: string; name: string }> {
+  ): Promise<{ id: number; username: string; name: string; role: string }> {
     const admin = await this.userService.findOneBy({ id });
     return {
       id: admin.id,
       username: admin.username,
       name: admin.name,
+      role: admin.role,
     };
   }
 }

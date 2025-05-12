@@ -65,7 +65,7 @@ export class AdminMenuController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() menu: any) {
+  async update(@Param('id') id: string, @Body() menu: MenuDto) {
     const success = await this.adminMenuService.update(Number(id), menu);
     if (success) {
       return { success: true };

@@ -62,7 +62,23 @@ export class MenuService {
   }
 
   async update(id: number, menu: UpdateMenuDto): Promise<any> {
-    const result = await this.menuRepository.update(id, menu);
+    const result = await this.menuRepository.update(id, {
+      name: menu.name,
+      name_en: menu.name_en,
+      description: menu.description,
+      image_url: menu.image_url,
+      price: menu.price,
+      status: menu.status,
+      is_active: menu.is_active,
+      is_recommended: menu.is_recommended,
+      category_id: menu.category_id,
+    });
+    // for await (const optionId of menu.items) {
+    //   const option = new MenuOptionMapping();
+    //   option.menu_id = id;
+    //   option.option_id = optionId;
+    //   await this.menuOptionMappingRepository.save(option);
+    // }
     return result.affected > 0;
   }
 
@@ -77,7 +93,7 @@ export class MenuService {
     option.is_required = optionDto.is_required;
     option.allow_multiple = optionDto.allow_multiple;
     const result = await this.menuOptionRepository.save(option);
-    for (const choice of optionDto.choices) {
+    for await (const choice of optionDto.choices) {
       const menuOptionChoice = new MenuOptionChoice();
       menuOptionChoice.name = choice.name;
       menuOptionChoice.additional_price = choice.additional_price;
@@ -130,8 +146,8 @@ export class MenuService {
     return this.menuCategoryRepository.find(options);
   }
 
-  async updateCategory(id: number, categoryDto: CategoryDto): Promise<boolean> {
-    const result = await this.menuCategoryRepository.update(id, categoryDto);
+  async updateCategory(id: number, category: CategoryDto): Promise<boolean> {
+    const result = await this.menuCategoryRepository.update(id, category);
     return result.affected > 0;
   }
 

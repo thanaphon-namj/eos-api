@@ -18,6 +18,9 @@ const DB = {
   USERNAME: DB_USERNAME,
   PASSWORD: DB_PASSWORD,
   NAME: DB_NAME,
+  SSL: {
+    CA: Buffer.from(process.env.DB_SSL_CA, 'base64').toString('ascii'),
+  },
 };
 
 const SECRET_KEY: string = process.env.SECRET_KEY || 'SECRET_KEY';

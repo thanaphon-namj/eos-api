@@ -10,7 +10,7 @@ export interface MenuDto {
   is_active?: boolean;
   is_recommended?: boolean;
   category_id: number;
-  options: number[];
+  options?: number[];
 }
 
 export interface UpdateMenuDto {
