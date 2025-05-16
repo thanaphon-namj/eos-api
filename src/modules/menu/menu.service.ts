@@ -11,9 +11,10 @@ import { MenuOption } from './menu-option.entity';
 import { MenuOptionChoice } from './menu-option-choice.entity';
 import { MenuOptionMapping } from './menu-option-mapping.entity';
 import { MenuCategory } from './menu-category.entity';
-import { MenuDto, UpdateMenuDto } from './dto/menu.dto';
+import { MenuDto } from './dto/menu.dto';
 import { OptionDto } from './dto/option.dto';
 import { CategoryDto } from './dto/category.dto';
+import { compareArray } from '../../utils/array';
 
 @Injectable()
 export class MenuService {
@@ -61,7 +62,7 @@ export class MenuService {
     return this.menuRepository.findOneBy(where);
   }
 
-  async update(id: number, menu: UpdateMenuDto): Promise<any> {
+  async update(id: number, menu: MenuDto): Promise<any> {
     const result = await this.menuRepository.update(id, {
       name: menu.name,
       name_en: menu.name_en,
@@ -73,12 +74,26 @@ export class MenuService {
       is_recommended: menu.is_recommended,
       category_id: menu.category_id,
     });
-    // for await (const optionId of menu.items) {
-    //   const option = new MenuOptionMapping();
-    //   option.menu_id = id;
-    //   option.option_id = optionId;
-    //   await this.menuOptionMappingRepository.save(option);
-    // }
+    if (menu.options.length > 0) {
+      const options = await this.menuOptionMappingRepository.find({
+        where: {
+          menu_id: id,
+        },
+        select: ['option_id'],
+      });
+      const Ids = options.map((o) => o.option_id);
+      if (!compareArray(menu.options, Ids)) {
+        if (Ids.length > 0) {
+          await this.menuOptionMappingRepository.delete({ menu_id: id });
+        }
+        for await (const optionId of menu.options) {
+          const option = new MenuOptionMapping();
+          option.menu_id = id;
+          option.option_id = optionId;
+          await this.menuOptionMappingRepository.save(option);
+        }
+      }
+    }
     return result.affected > 0;
   }
 
@@ -112,8 +127,33 @@ export class MenuService {
     return this.menuOptionRepository.findOne(options);
   }
 
-  async updateOption(id: number, optionDto: OptionDto): Promise<boolean> {
-    const result = await this.menuOptionRepository.update(id, optionDto);
+  async updateOption(id: number, option: OptionDto): Promise<boolean> {
+    const result = await this.menuOptionRepository.update(id, {
+      name: option.name,
+      is_required: option.is_required,
+      allow_multiple: option.allow_multiple,
+    });
+    if (option.choices.length > 0) {
+      const choices = await this.menuOptionChoiceRepository.find({
+        where: {
+          option_id: id,
+        },
+        select: ['id', 'name', 'additional_price'],
+      });
+      if (!compareArray(option.choices, choices)) {
+        if (choices.length > 0) {
+          await this.menuOptionChoiceRepository.delete({ option_id: id });
+        }
+        for await (const choice of option.choices) {
+          const menuOptionChoice = new MenuOptionChoice();
+          menuOptionChoice.name = choice.name;
+          menuOptionChoice.additional_price = choice.additional_price;
+          menuOptionChoice.status = MenuStatus.Available;
+          menuOptionChoice.option_id = id;
+          await this.menuOptionChoiceRepository.save(menuOptionChoice);
+        }
+      }
+    }
     return result.affected > 0;
   }
 

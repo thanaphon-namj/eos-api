@@ -105,6 +105,7 @@ export class AdminMenuService {
         },
       },
       order: {
+        id: 'ASC',
         choices: {
           additional_price: 'ASC',
         },
