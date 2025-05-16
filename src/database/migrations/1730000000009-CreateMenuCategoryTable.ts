@@ -56,7 +56,7 @@ export class CreateMenuCategoryTable1730000000009
         columnNames: ['category_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuCategory',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
     await queryRunner.createForeignKey(

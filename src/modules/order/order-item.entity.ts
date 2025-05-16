@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
-import { Menu } from '../menu/menu.entity';
 import { OrderItemChoice } from './order-item-choice.entity';
+import { Menu } from '../menu/menu.entity';
 
 @Entity({ name: 'OrderItem' })
 export class OrderItem {

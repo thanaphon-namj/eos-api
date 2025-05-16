@@ -9,7 +9,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { OrderStatus } from './order.entity';
 import { OrderDto, OrderItemDto } from './dto/order.dto';
 import { convertToUid } from '../../utils/generate';
 
@@ -18,14 +17,14 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Post()
-  async createOrder(@Body() order: OrderDto) {
+  async create(@Body() order: OrderDto) {
     const { id } = await this.orderService.create(order);
     return convertToUid(String(id));
   }
 
   @Post(':id')
-  async addOrderItem(@Param('id') id: string, @Body() item: OrderItemDto) {
-    const success = await this.orderService.createOrderItem(Number(id), item);
+  async addItem(@Param('id') id: string, @Body() item: OrderItemDto) {
+    const success = await this.orderService.createItem(Number(id), item);
     if (success) {
       return { success: true };
     } else {
@@ -85,19 +84,19 @@ export class OrderController {
     };
   }
 
-  @Get(':id/calculate')
-  async calculateOrder(@Param('id') id: string) {
-    const success = this.orderService.calculate(Number(id));
-    if (success) {
-      return { success: true };
-    } else {
-      throw new InternalServerErrorException();
-    }
-  }
+  // @Get(':id/calculate')
+  // async calculate(@Param('id') id: string) {
+  //   const success = this.orderService.calculate(Number(id));
+  //   if (success) {
+  //     return { success: true };
+  //   } else {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 
   @Put('item/:id')
-  async updateOrderItem(@Param('id') id: string, @Body() item: any) {
-    const success = await this.orderService.updateOrderItem(Number(id), item);
+  async updateItem(@Param('id') id: string, @Body() item: any) {
+    const success = await this.orderService.updateItem(Number(id), item);
     if (success) {
       return { success: true };
     } else {
@@ -106,13 +105,13 @@ export class OrderController {
   }
 
   @Delete('item/:id')
-  removeOrderItem(@Param('id') id: string) {
-    return this.orderService.deleteOrderItem(Number(id));
+  removeItem(@Param('id') id: string) {
+    return this.orderService.deleteItem(Number(id));
   }
 
   @Post(':id/confirm')
-  async confirmOrder(@Param('id') id: string) {
-    const success = await this.orderService.confirmOrder(Number(id));
+  async confirm(@Param('id') id: string) {
+    const success = await this.orderService.confirm(Number(id));
     if (success) {
       return { success: true };
     } else {
@@ -121,8 +120,8 @@ export class OrderController {
   }
 
   @Delete(':id')
-  async cancelOrder(@Param('id') id: string) {
-    const success = await this.orderService.cancelOrder(Number(id));
+  async cancel(@Param('id') id: string) {
+    const success = await this.orderService.cancel(Number(id));
     if (success) {
       return { success: true };
     } else {

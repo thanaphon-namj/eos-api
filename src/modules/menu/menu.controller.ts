@@ -38,7 +38,7 @@ export class MenuController {
         is_active: true,
         is_recommended: true,
       },
-      relations: ['category'],
+      relations: ['category', 'category.parent'],
       select: {
         id: true,
         name: true,
@@ -48,6 +48,10 @@ export class MenuController {
         category: {
           id: true,
           name: true,
+          parent: {
+            id: true,
+            name: true,
+          },
         },
       },
       order: {

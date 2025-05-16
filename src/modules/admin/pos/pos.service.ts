@@ -90,7 +90,7 @@ export class AdminPosService {
   }
 
   addOrderItem(id: number, item: OrderItemDto) {
-    return this.orderService.createOrderItem(id, item);
+    return this.orderService.createItem(id, item);
   }
 
   async updateOrder(id: number, item: OrderDto): Promise<boolean> {
@@ -100,10 +100,10 @@ export class AdminPosService {
   }
 
   updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
-    return this.orderService.updateOrderItem(id, item);
+    return this.orderService.updateItem(id, item);
   }
 
   removeOrderItem(id: number): Promise<boolean> {
-    return this.orderService.deleteOrderItem(id);
+    return this.orderService.deleteItem(id);
   }
 }

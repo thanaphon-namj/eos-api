@@ -10,7 +10,7 @@ export class AdminOrderService {
     return this.orderService.findAllBy({ status: query.status });
   }
 
-  async getOrderById(id: number) {
+  async getById(id: number) {
     const order = await this.orderService.findOne({
       where: {
         id,
@@ -64,11 +64,11 @@ export class AdminOrderService {
     };
   }
 
-  completeOrder(id: number, adminId: number): Promise<boolean> {
-    return this.orderService.completeOrder(id, adminId);
+  complete(id: number, adminId: number): Promise<boolean> {
+    return this.orderService.complete(id, adminId);
   }
 
-  cancelOrder(id: number, adminId: number): Promise<boolean> {
-    return this.orderService.cancelOrder(id, adminId);
+  cancel(id: number, adminId: number): Promise<boolean> {
+    return this.orderService.cancel(id, adminId);
   }
 }

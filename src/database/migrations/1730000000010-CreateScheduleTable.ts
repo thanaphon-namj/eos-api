@@ -41,7 +41,7 @@ export class CreateScheduleTable1730000000010 implements MigrationInterface {
         columnNames: ['order_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Order',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
   }

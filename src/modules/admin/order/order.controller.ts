@@ -23,14 +23,14 @@ export class AdminOrderController {
   }
 
   @Get(':id')
-  getOrderById(@Param('id') id: string) {
-    return this.adminOrderService.getOrderById(Number(id));
+  getById(@Param('id') id: string) {
+    return this.adminOrderService.getById(Number(id));
   }
 
   @Post(':id/complete')
   @UseGuards(AuthGuard)
-  async completeOrder(@Request() req: any, @Param('id') id: string) {
-    const success = await this.adminOrderService.completeOrder(
+  async complete(@Request() req: any, @Param('id') id: string) {
+    const success = await this.adminOrderService.complete(
       Number(id),
       req.user.sub,
     );
@@ -43,8 +43,8 @@ export class AdminOrderController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  async cancelOrder(@Request() req: any, @Param('id') id: string) {
-    const success = await this.adminOrderService.cancelOrder(
+  async cancel(@Request() req: any, @Param('id') id: string) {
+    const success = await this.adminOrderService.cancel(
       Number(id),
       req.user.sub,
     );

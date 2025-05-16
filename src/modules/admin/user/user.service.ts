@@ -9,4 +9,16 @@ export class AdminUserService {
   create(user: UserDto) {
     return this.userService.create(user);
   }
+
+  getAll() {
+    return this.userService.findAll();
+  }
+
+  update(id: number, user: UserDto) {
+    return this.userService.update(id, user);
+  }
+
+  delete(id: number) {
+    return this.userService.delete(id);
+  }
 }

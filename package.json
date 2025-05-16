@@ -16,8 +16,7 @@
     "typeorm": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm -d src/database/data-source.ts",
     "migration:create": "typeorm migration:create",
     "migration:run": "npm run typeorm migration:run",
-    "migration:revert": "npm run typeorm migration:revert",
-    "seed:run": "./node_modules/.bin/ts-node ./src/database/seeds/run.ts"
+    "migration:revert": "npm run typeorm migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

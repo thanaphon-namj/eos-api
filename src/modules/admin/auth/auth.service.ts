@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../user/user.service';
 import { comparePassword } from '../../../utils/bcrypt';
@@ -10,8 +14,11 @@ export class AdminAuthService {
     private userService: UserService,
   ) {}
 
-  async login(username: string, password: string): Promise<string> {
-    const admin = await this.userService.findOneBy({ username });
+  async login(username: string, password: string) {
+    const admin = await this.userService.findOne({
+      where: { username },
+      select: ['id', 'username', 'password'],
+    });
     if (!(await comparePassword(password, admin.password))) {
       throw new UnauthorizedException('Password invalid.');
     }
@@ -21,15 +28,12 @@ export class AdminAuthService {
     });
   }
 
-  async getUser(
-    id: number,
-  ): Promise<{ id: number; username: string; name: string; role: string }> {
-    const admin = await this.userService.findOneBy({ id });
-    return {
-      id: admin.id,
-      username: admin.username,
-      name: admin.name,
-      role: admin.role,
-    };
+  async getUser(id: number) {
+    const admin = await this.userService.findOne({
+      where: { id },
+      select: ['id', 'username', 'name', 'role'],
+    });
+    if (!admin) throw new NotFoundException('User not found.');
+    return admin;
   }
 }

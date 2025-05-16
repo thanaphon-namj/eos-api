@@ -53,7 +53,7 @@ export class CreateMenuOptionChoiceTable1730000000007
         columnNames: ['choice_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuOptionChoice',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
     await queryRunner.createForeignKey(
@@ -63,7 +63,7 @@ export class CreateMenuOptionChoiceTable1730000000007
         columnNames: ['option_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuOption',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
   }

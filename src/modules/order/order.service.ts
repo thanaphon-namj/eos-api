@@ -85,7 +85,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async confirmOrder(id: number): Promise<boolean> {
+  async confirm(id: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Confirmed,
       updated_at: new Date(),
@@ -94,7 +94,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async completeOrder(id: number, adminId?: number): Promise<boolean> {
+  async complete(id: number, adminId?: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Completed,
       admin_id: adminId,
@@ -102,7 +102,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async cancelOrder(id: number, adminId?: number): Promise<boolean> {
+  async cancel(id: number, adminId?: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Cancelled,
       admin_id: adminId,
@@ -110,7 +110,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async createOrderItem(id: number, menu: OrderItemDto): Promise<boolean> {
+  async createItem(id: number, menu: OrderItemDto): Promise<boolean> {
     const exist = await this.orderItemRepository.findOne({
       where: {
         order_id: id,
@@ -173,7 +173,7 @@ export class OrderService {
     return this.calculate(id);
   }
 
-  async updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
+  async updateItem(id: number, item: OrderItemDto): Promise<boolean> {
     if (item.options) {
       // await this.itemVariantRepository.delete({ item_id: id });
       // for await (const option of item.options) {
@@ -195,7 +195,7 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  async deleteOrderItem(id: number): Promise<boolean> {
+  async deleteItem(id: number): Promise<boolean> {
     const { order_id } = await this.orderItemRepository.findOne({
       where: { id },
       select: ['order_id'],

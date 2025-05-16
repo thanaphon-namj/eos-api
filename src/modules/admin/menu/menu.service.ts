@@ -15,11 +15,16 @@ export class AdminMenuService {
   }
 
   getAll(query: QueryDto) {
-    return this.menuService.findAll({
-      where: {
-        name: Like(`%${query.q}%`),
-        // category_id: queryDto.category_id,
+    const where = {
+      category: {
+        parent_id: query.category_id,
       },
+    };
+    if (query.q) {
+      where['name'] = Like(`%${query.q}%`);
+    }
+    return this.menuService.findAll({
+      where,
       select: ['id', 'name', 'image_url'],
     });
   }
@@ -33,8 +38,8 @@ export class AdminMenuService {
         name: true,
         name_en: true,
         description: true,
-        price: true,
         image_url: true,
+        price: true,
         status: true,
         is_active: true,
         is_recommended: true,
@@ -51,6 +56,8 @@ export class AdminMenuService {
           option: {
             id: true,
             name: true,
+            is_required: true,
+            allow_multiple: true,
             choices: {
               id: true,
               name: true,

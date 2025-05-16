@@ -73,7 +73,7 @@ export class CreateMenuTable1730000000005 implements MigrationInterface {
         columnNames: ['menu_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Menu',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
   }

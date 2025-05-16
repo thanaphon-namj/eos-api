@@ -33,7 +33,7 @@ export class CreateOrderItemChoiceTable1730000000004
         columnNames: ['item_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'OrderItem',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
   }

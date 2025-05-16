@@ -2,14 +2,11 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MenuCategory } from './menu-category.entity';
-import { MenuOption } from './menu-option.entity';
 import { MenuOptionMapping } from './menu-option-mapping.entity';
 
 export enum MenuStatus {
