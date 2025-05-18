@@ -19,6 +19,7 @@ export class AdminAuthService {
       where: { username },
       select: ['id', 'username', 'password'],
     });
+    if (!admin) throw new NotFoundException('User not found.');
     if (!(await comparePassword(password, admin.password))) {
       throw new UnauthorizedException('Password invalid.');
     }
