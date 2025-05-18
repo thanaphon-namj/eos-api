@@ -5,3 +5,8 @@ export interface CategoryDto {
   priority: number;
   parent_id?: number;
 }
+
+export interface BannerDto {
+  category_id: number;
+  image_url: string;
+}

@@ -25,6 +25,8 @@ export class SettingService {
   }
 
   findAllBanner() {
-    return this.menuService.findAllBanner();
+    return this.menuService.findAllBanner({
+      select: ['id', 'banner_url'],
+    });
   }
 }

@@ -1,12 +1,12 @@
 import { OrderStatus } from '../order.entity';
 
-export class OrderDto {
+export interface OrderDto {
   name?: string;
   status?: OrderStatus;
   admin_id?: number;
 }
 
-export class OrderItemDto {
+export interface OrderItemDto {
   id?: number;
   quantity: number;
   note?: string;

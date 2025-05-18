@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindManyOptions,
   FindOneOptions,
-  FindOptionsWhere,
   IsNull,
   Not,
   Repository,
@@ -15,7 +14,7 @@ import { MenuOptionMapping } from './menu-option-mapping.entity';
 import { MenuCategory } from './menu-category.entity';
 import { MenuDto } from './dto/menu.dto';
 import { OptionDto } from './dto/option.dto';
-import { CategoryDto } from './dto/category.dto';
+import { BannerDto, CategoryDto } from './dto/category.dto';
 import { compareArray } from '../../utils/array';
 
 @Injectable()
@@ -58,10 +57,6 @@ export class MenuService {
 
   findOne(options: FindOneOptions<Menu>): Promise<Menu> {
     return this.menuRepository.findOne(options);
-  }
-
-  findOneBy(where: FindOptionsWhere<Menu>): Promise<Menu> {
-    return this.menuRepository.findOneBy(where);
   }
 
   async update(id: number, menu: MenuDto): Promise<any> {
@@ -185,12 +180,41 @@ export class MenuService {
     return result.affected > 0;
   }
 
-  findAllBanner(): Promise<MenuCategory[]> {
+  async createBanner(banner: BannerDto) {
+    const result = await this.menuCategoryRepository.update(
+      banner.category_id,
+      {
+        banner_url: banner.image_url,
+      },
+    );
+    return result.affected > 0;
+  }
+
+  findAllBanner(
+    options?: FindManyOptions<MenuCategory>,
+  ): Promise<MenuCategory[]> {
     return this.menuCategoryRepository.find({
       where: {
         banner_url: Not(IsNull()),
       },
-      select: ['id', 'banner_url'],
+      select: options.select,
     });
+  }
+
+  async updateBanner(id: number, banner: BannerDto) {
+    const result = await this.menuCategoryRepository.update(id, {
+      banner_url: null,
+    });
+    await this.menuCategoryRepository.update(banner.category_id, {
+      banner_url: banner.image_url,
+    });
+    return result.affected > 0;
+  }
+
+  async deleteBanner(id: number) {
+    const result = await this.menuCategoryRepository.update(id, {
+      banner_url: null,
+    });
+    return result.affected > 0;
   }
 }

@@ -1,6 +1,6 @@
 import { OrderStatus } from '../../../order/order.entity';
 
-export class QueryDto {
+export interface QueryDto {
   status: OrderStatus;
   created_at: Date;
 }

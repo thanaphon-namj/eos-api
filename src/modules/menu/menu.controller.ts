@@ -9,14 +9,17 @@ export class MenuController {
   getAll() {
     return this.menuService.findAll({
       relations: ['category'],
-      select: ['id', 'name', 'image_url', 'price'],
+      select: ['id', 'name', 'name_en', 'image_url', 'price'],
     });
   }
 
   @Get('category')
   getAllCategory() {
     return this.menuService.findAllCategory({
-      select: ['id', 'name'],
+      select: ['id', 'name', 'image_url', 'parent_id'],
+      order: {
+        parent_id: 'ASC',
+      },
     });
   }
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Between,
@@ -72,12 +72,6 @@ export class OrderService {
 
   findOne(options: FindOneOptions<Order>): Promise<Order> {
     return this.orderRepository.findOne(options);
-  }
-
-  async findOneBy(where: FindOptionsWhere<Order>): Promise<Order> {
-    const order = await this.orderRepository.findOneBy(where);
-    if (!order) throw new NotFoundException();
-    return order;
   }
 
   async update(id: number, orderDto: OrderDto): Promise<boolean> {
