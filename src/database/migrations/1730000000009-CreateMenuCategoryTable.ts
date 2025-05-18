@@ -37,10 +37,10 @@ export class CreateMenuCategoryTable1730000000009
             length: '255',
             isNullable: true,
           },
-          {
-            name: 'priority',
-            type: 'int',
-          },
+          // {
+          //   name: 'priority',
+          //   type: 'int',
+          // },
           {
             name: 'parent_id',
             type: 'int',
@@ -66,7 +66,7 @@ export class CreateMenuCategoryTable1730000000009
         columnNames: ['parent_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuCategory',
-        onDelete: 'SET NULL',
+        onDelete: 'RESTRICT',
       }),
     );
   }

@@ -8,16 +8,8 @@ export class MenuController {
   @Get()
   getAll() {
     return this.menuService.findAll({
-      where: {
-        is_active: true,
-      },
       relations: ['category'],
       select: ['id', 'name', 'image_url', 'price'],
-      order: {
-        category: {
-          priority: 'ASC',
-        },
-      },
     });
   }
 
@@ -25,9 +17,6 @@ export class MenuController {
   getAllCategory() {
     return this.menuService.findAllCategory({
       select: ['id', 'name'],
-      order: {
-        priority: 'ASC',
-      },
     });
   }
 
@@ -35,7 +24,6 @@ export class MenuController {
   getAllRecommended() {
     return this.menuService.findAll({
       where: {
-        is_active: true,
         is_recommended: true,
       },
       relations: ['category', 'category.parent'],
@@ -54,17 +42,12 @@ export class MenuController {
           },
         },
       },
-      order: {
-        category: {
-          priority: 'ASC',
-        },
-      },
     });
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string) {
-    const menu = await this.menuService.findOne({
+  getById(@Param('id') id: string) {
+    return this.menuService.findOne({
       where: {
         id: Number(id),
       },
@@ -77,9 +60,5 @@ export class MenuController {
       //   },
       // },
     });
-    return {
-      ...menu,
-      // options: menu.options.filter((option) => option.is_active),
-    };
   }
 }

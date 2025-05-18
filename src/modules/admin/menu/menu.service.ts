@@ -41,7 +41,6 @@ export class AdminMenuService {
         image_url: true,
         price: true,
         status: true,
-        is_active: true,
         is_recommended: true,
         category: {
           id: true,
@@ -129,7 +128,6 @@ export class AdminMenuService {
     return this.menuService.findAllCategory({
       select: ['id', 'name', 'image_url', 'parent_id'],
       order: {
-        priority: 'ASC',
         parent_id: 'ASC',
       },
     });
@@ -137,10 +135,6 @@ export class AdminMenuService {
 
   updateCategory(id: number, category: CategoryDto): Promise<boolean> {
     return this.menuService.updateCategory(id, category);
-  }
-
-  reorderCategory(categories: CategoryDto[]): Promise<boolean> {
-    return this.menuService.reorderCategory(categories);
   }
 
   deleteCategory(id: number): Promise<boolean> {

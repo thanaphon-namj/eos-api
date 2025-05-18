@@ -4,6 +4,8 @@ import {
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
+  IsNull,
+  Not,
   Repository,
 } from 'typeorm';
 import { Menu, MenuStatus } from './menu.entity';
@@ -70,7 +72,6 @@ export class MenuService {
       image_url: menu.image_url,
       price: menu.price,
       status: menu.status,
-      is_active: menu.is_active,
       is_recommended: menu.is_recommended,
       category_id: menu.category_id,
     });
@@ -112,7 +113,6 @@ export class MenuService {
       const menuOptionChoice = new MenuOptionChoice();
       menuOptionChoice.name = choice.name;
       menuOptionChoice.additional_price = choice.additional_price;
-      menuOptionChoice.status = MenuStatus.Available;
       menuOptionChoice.option_id = result.id;
       await this.menuOptionChoiceRepository.save(menuOptionChoice);
     }
@@ -148,7 +148,6 @@ export class MenuService {
           const menuOptionChoice = new MenuOptionChoice();
           menuOptionChoice.name = choice.name;
           menuOptionChoice.additional_price = choice.additional_price;
-          menuOptionChoice.status = MenuStatus.Available;
           menuOptionChoice.option_id = id;
           await this.menuOptionChoiceRepository.save(menuOptionChoice);
         }
@@ -163,19 +162,9 @@ export class MenuService {
   }
 
   async createCategory(categoryDto: CategoryDto): Promise<MenuCategory> {
-    const result = await this.menuCategoryRepository.findOne({
-      where: {
-        parent_id: categoryDto.parent_id,
-      },
-      select: ['priority'],
-      order: {
-        priority: 'DESC',
-      },
-    });
     const category = new MenuCategory();
     category.name = categoryDto.name;
     category.image_url = categoryDto.image_url;
-    category.priority = result ? result.priority + 1 : 1;
     if (categoryDto.parent_id) category.parent_id = categoryDto.parent_id;
     return this.menuCategoryRepository.save(category);
   }
@@ -191,23 +180,17 @@ export class MenuService {
     return result.affected > 0;
   }
 
-  async reorderCategory(categoryDto: CategoryDto[]): Promise<boolean> {
-    const categories = await this.menuCategoryRepository.find({
-      select: ['id', 'priority'],
-    });
-    for await (const c of categories) {
-      const category = categoryDto.find((d) => d.id === c.id);
-      if (category && category.priority !== c.priority) {
-        await this.menuCategoryRepository.update(category.id, {
-          priority: category.priority,
-        });
-      }
-    }
-    return true;
-  }
-
   async deleteCategory(id: number): Promise<boolean> {
     const result = await this.menuCategoryRepository.delete(id);
     return result.affected > 0;
+  }
+
+  findAllBanner(): Promise<MenuCategory[]> {
+    return this.menuCategoryRepository.find({
+      where: {
+        banner_url: Not(IsNull()),
+      },
+      select: ['id', 'banner_url'],
+    });
   }
 }

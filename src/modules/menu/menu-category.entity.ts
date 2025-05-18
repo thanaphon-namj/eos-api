@@ -20,8 +20,8 @@ export class MenuCategory {
   @Column()
   banner_url: string;
 
-  @Column()
-  priority: number;
+  // @Column()
+  // priority: number;
 
   @Column()
   parent_id: number;

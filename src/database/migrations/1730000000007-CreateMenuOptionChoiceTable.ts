@@ -29,16 +29,16 @@ export class CreateMenuOptionChoiceTable1730000000007
             name: 'additional_price',
             type: 'double',
           },
-          {
-            name: 'status',
-            type: 'varchar',
-            length: '10',
-          },
-          {
-            name: 'is_active',
-            type: 'boolean',
-            default: true,
-          },
+          // {
+          //   name: 'status',
+          //   type: 'varchar',
+          //   length: '10',
+          // },
+          // {
+          //   name: 'is_active',
+          //   type: 'boolean',
+          //   default: true,
+          // },
           {
             name: 'option_id',
             type: 'int',

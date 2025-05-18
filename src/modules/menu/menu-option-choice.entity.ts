@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MenuOption } from './menu-option.entity';
-import { MenuStatus } from './menu.entity';
 
 @Entity({ name: 'MenuOptionChoice' })
 export class MenuOptionChoice {
@@ -19,11 +18,11 @@ export class MenuOptionChoice {
   @Column()
   additional_price: number;
 
-  @Column()
-  status: MenuStatus;
+  // @Column()
+  // status: MenuStatus;
 
-  @Column()
-  is_active: boolean;
+  // @Column()
+  // is_active: boolean;
 
   @Column()
   option_id: number;

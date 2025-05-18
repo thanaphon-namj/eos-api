@@ -27,21 +27,6 @@ export class AdminPosController {
     return this.adminPosService.getInbox(query);
   }
 
-  @Get('menu')
-  async getAllMenu() {
-    const categories = await this.adminPosService.getAllMenuCategory();
-    const items = await this.adminPosService.getAllMenu();
-    return {
-      categories,
-      items,
-    };
-  }
-
-  @Get('menu/:id')
-  getMenuById(@Param('id') id: string) {
-    return this.adminPosService.getMenuById(Number(id));
-  }
-
   @Post('order/:id')
   addOrderItem(@Param('id') id: string, @Body() item: OrderItemDto) {
     return this.adminPosService.addOrderItem(Number(id), item);
