@@ -12,3 +12,8 @@ export interface MenuDto {
   category_id: number;
   options?: number[];
 }
+
+export interface QueryDto {
+  category_id: string;
+  sub_category_id?: string;
+}

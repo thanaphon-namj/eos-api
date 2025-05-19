@@ -1,13 +1,20 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { MenuService } from './menu.service';
+import { QueryDto } from './dto/menu.dto';
 
 @Controller('menu')
 export class MenuController {
   constructor(private menuService: MenuService) {}
 
   @Get()
-  getAll() {
+  getAll(@Query() query: QueryDto) {
     return this.menuService.findAll({
+      where: {
+        category: {
+          id: Number(query.sub_category_id) || null,
+          parent_id: Number(query.category_id) || null,
+        },
+      },
       relations: ['category'],
       select: ['id', 'name', 'name_en', 'image_url', 'price'],
     });
