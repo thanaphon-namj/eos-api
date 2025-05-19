@@ -59,6 +59,7 @@ export class OrderService {
         name: true,
         total: true,
         status: true,
+        created_at: true,
         updated_at: true,
         items: {
           id: true,

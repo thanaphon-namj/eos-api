@@ -11,15 +11,15 @@ export class AdminOrderService {
   }
 
   async getById(id: number) {
-    const order = await this.orderService.findOne({
+    return this.orderService.findOne({
       where: {
         id,
       },
       relations: [
         'items',
-        'items.menu',
-        'items.options',
-        'items.options.option',
+        // 'items.menu',
+        // 'items.options',
+        // 'items.options.option',
       ],
       select: {
         id: true,
@@ -29,6 +29,7 @@ export class AdminOrderService {
         discount: true,
         total: true,
         status: true,
+        created_at: true,
         updated_at: true,
         items: {
           id: true,
@@ -55,13 +56,6 @@ export class AdminOrderService {
         },
       },
     });
-    return {
-      ...order,
-      items: order.items.map((item) => ({
-        ...item,
-        // options: item.options.map((option) => option.option),
-      })),
-    };
   }
 
   complete(id: number, adminId: number): Promise<boolean> {
