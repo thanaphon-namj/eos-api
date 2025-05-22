@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -56,10 +57,17 @@ export class AdminMenuController {
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    const success = await this.adminMenuService.delete(Number(id));
-    if (success) {
-      return { success: true };
-    } else {
+    try {
+      const success = await this.adminMenuService.delete(Number(id));
+      if (success) {
+        return { success: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (error) {
+      if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new BadRequestException("Can't delete menu.");
+      }
       throw new InternalServerErrorException();
     }
   }

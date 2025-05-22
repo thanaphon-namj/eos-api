@@ -25,6 +25,7 @@ export class CreateOrderItemTable1730000000003 implements MigrationInterface {
           {
             name: 'total',
             type: 'double',
+            default: 0,
           },
           {
             name: 'note',

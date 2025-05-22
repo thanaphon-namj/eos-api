@@ -5,7 +5,6 @@ import {
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
-  In,
   Repository,
 } from 'typeorm';
 import { Order, OrderStatus } from './order.entity';
@@ -66,6 +65,7 @@ export class OrderService {
         },
       },
       order: {
+        created_at: 'DESC',
         updated_at: 'DESC',
       },
     });
@@ -112,75 +112,66 @@ export class OrderService {
         menu_id: menu.id,
         note: menu.note,
       },
-      relations: ['options'],
-      select: ['id', 'quantity', 'order_id'],
+      relations: ['choices'],
+      select: ['id'],
     });
     if (exist) {
-      // const options = exist.options.map((option) => option.option_id);
-      // const existOptions = compareArray(options, item.options);
-      if (menu.choices.length > 0) {
-        // if (existOptions) {
-        //   await this.updateOrderItem(exist.id, {
-        //     quantity: exist.quantity + item.quantity,
-        //   });
-        // } else {
-        //   const orderItem = new OrderItem();
-        //   orderItem.quantity = item.quantity;
-        //   orderItem.note = item.note;
-        //   orderItem.order_id = id;
-        //   orderItem.menu_id = item.id;
-        //   const result = await this.orderItemRepository.save(orderItem);
-        //   // for await (const option of item.options) {
-        //   //   const itemVariant = new ItemVariant();
-        //   //   itemVariant.item_id = result.id;
-        //   //   itemVariant.option_id = option;
-        //   //   await this.itemVariantRepository.save(itemVariant);
-        //   // }
-        // }
+      const choiceIds = exist.choices.map((choice) => choice.choice_id);
+      const existChoice = compareArray(choiceIds, menu.choices);
+      if (existChoice) {
+        await this.orderItemRepository.increment(
+          { id: exist.id },
+          'quantity',
+          menu.quantity,
+        );
       } else {
-        // if (existOptions) {
-        //   await this.updateOrderItem(exist.id, {
-        //     quantity: exist.quantity + item.quantity,
-        //   });
-        // } else {
-        //   const orderItem = new OrderItem();
-        //   orderItem.quantity = item.quantity;
-        //   orderItem.note = item.note;
-        //   orderItem.order_id = id;
-        //   orderItem.menu_id = item.id;
-        //   await this.orderItemRepository.save(orderItem);
-        // }
+        const result = await this.newItem(id, menu);
+        for await (const choiceId of menu.choices) {
+          await this.createItemChoice(result.id, choiceId);
+        }
       }
     } else {
-      const orderItem = new OrderItem();
-      orderItem.quantity = menu.quantity;
-      orderItem.note = menu.note;
-      orderItem.order_id = id;
-      orderItem.menu_id = menu.id;
-      const result = await this.orderItemRepository.save(orderItem);
+      const result = await this.newItem(id, menu);
       for await (const choiceId of menu.choices) {
-        const orderItemChoice = new OrderItemChoice();
-        orderItemChoice.item_id = result.id;
-        orderItemChoice.choice_id = choiceId;
-        await this.orderItemChoiceRepository.save(orderItemChoice);
+        await this.createItemChoice(result.id, choiceId);
       }
     }
     return this.calculate(id);
   }
 
-  async updateItem(id: number, item: OrderItemDto): Promise<boolean> {
-    if (item.options) {
-      // await this.itemVariantRepository.delete({ item_id: id });
-      // for await (const option of item.options) {
-      //   const itemVariant = new ItemVariant();
-      //   itemVariant.item_id = id;
-      //   itemVariant.option_id = option;
-      //   await this.itemVariantRepository.save(itemVariant);
-      // }
+  newItem(id: number, menu: OrderItemDto): Promise<OrderItem> {
+    const orderItem = new OrderItem();
+    orderItem.quantity = menu.quantity;
+    orderItem.note = menu.note;
+    orderItem.order_id = id;
+    orderItem.menu_id = menu.id;
+    return this.orderItemRepository.save(orderItem);
+  }
+
+  createItemChoice(id: number, choiceId: number): Promise<OrderItemChoice> {
+    const orderItemChoice = new OrderItemChoice();
+    orderItemChoice.item_id = id;
+    orderItemChoice.choice_id = choiceId;
+    return this.orderItemChoiceRepository.save(orderItemChoice);
+  }
+
+  async updateItem(id: number, menu: OrderItemDto): Promise<boolean> {
+    const choiceIds = await this.orderItemChoiceRepository.find({
+      where: {
+        item_id: id,
+      },
+      select: ['choice_id'],
+    });
+    if (!compareArray(choiceIds, menu.choices)) {
+      console.log('delete');
+      await this.orderItemChoiceRepository.delete({ item_id: id });
+      for await (const choiceId of menu.choices) {
+        await this.createItemChoice(id, choiceId);
+      }
     }
     const result = await this.orderItemRepository.update(id, {
-      quantity: item.quantity,
-      note: item.note,
+      quantity: menu.quantity,
+      note: menu.note,
     });
     const { order_id } = await this.orderItemRepository.findOne({
       where: { id },
@@ -201,58 +192,48 @@ export class OrderService {
   }
 
   async calculate(id: number): Promise<boolean> {
-    // const items = await this.orderItemRepository.find({
-    //   where: { order_id: id },
-    //   relations: ['menu'],
-    //   select: {
-    //     id: true,
-    //     quantity: true,
-    //     // menu: { price: true },
-    //   },
-    // });
-    // const itemIds = items.map((item) => item.id);
-    // // const options = await this.itemVariantRepository.find({
-    // //   where: {
-    // //     item_id: In(itemIds),
-    // //   },
-    // //   relations: ['option'],
-    // //   select: {
-    // //     id: true,
-    // //     item_id: true,
-    // //     // option: { additional_price: true },
-    // //   },
-    // // });
-    // const optionsByItemId = options.reduce((previous, current) => {
-    //   if (!previous[current.item_id]) previous[current.item_id] = [];
-    //   previous[current.item_id].push(current);
-    //   return previous;
-    // }, {});
-    // const updatePromises = items.map((item) => {
-    //   let price = item.menu.price;
-    //   const itemOptions = optionsByItemId[item.id] || [];
-    //   price += itemOptions.reduce(
-    //     (previous: any, current: { option: { additional_price: any } }) =>
-    //       previous + current.option.additional_price,
-    //     0,
-    //   );
-    //   return this.orderItemRepository.update(item.id, {
-    //     total: price * item.quantity,
-    //   });
-    // });
-    // await Promise.all(updatePromises);
-    // const subTotal = await this.orderItemRepository.sum('total', {
-    //   order_id: id,
-    // });
-    // const order = await this.orderRepository.findOne({
-    //   where: { id },
-    //   select: ['discount'],
-    // });
-    // const total = subTotal - order.discount;
-    // const result = await this.orderRepository.update(id, {
-    //   subtotal: subTotal,
-    //   total,
-    // });
-    // return result.affected > 0;
-    return true;
+    const items = await this.orderItemRepository.find({
+      where: {
+        order_id: id,
+      },
+      relations: ['menu', 'choices', 'choices.choice'],
+      select: {
+        id: true,
+        quantity: true,
+        menu: {
+          price: true,
+        },
+        choices: {
+          choice_id: true,
+          choice: {
+            additional_price: true,
+          },
+        },
+      },
+    });
+    for await (const item of items) {
+      const additional_price = item.choices.reduce((previous, current) => {
+        return previous + current.choice.additional_price;
+      }, 0);
+      const price = item.menu.price + additional_price;
+      await this.orderItemRepository.update(item.id, {
+        total: price * item.quantity,
+      });
+    }
+    const subTotal = await this.orderItemRepository.sum('total', {
+      order_id: id,
+    });
+    const order = await this.orderRepository.findOne({
+      where: {
+        id,
+      },
+      select: ['discount'],
+    });
+    const total = subTotal - order.discount;
+    const result = await this.orderRepository.update(id, {
+      subtotal: subTotal || 0,
+      total,
+    });
+    return result.affected > 0;
   }
 }

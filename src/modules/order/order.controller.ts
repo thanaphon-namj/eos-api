@@ -7,9 +7,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
+import { In } from 'typeorm';
 import { OrderService } from './order.service';
 import { OrderDto, OrderItemDto } from './dto/order.dto';
+import { QueryDto } from './dto/query.dto';
 import { convertToUid } from '../../utils/generate';
 
 @Controller('order')
@@ -32,17 +35,42 @@ export class OrderController {
     }
   }
 
+  @Get('history')
+  async getAll(@Query() query: QueryDto) {
+    return this.orderService.findAll({
+      where: {
+        id: In(query.id),
+      },
+      relations: ['items'],
+      select: {
+        id: true,
+        code: true,
+        total: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        items: {
+          id: true,
+        },
+      },
+      order: {
+        created_at: 'DESC',
+        updated_at: 'DESC',
+      },
+    });
+  }
+
   @Get(':id')
   async getById(@Param('id') id: string) {
-    const order = await this.orderService.findOne({
+    return this.orderService.findOne({
       where: {
         id: Number(id),
       },
       relations: [
         'items',
         'items.menu',
-        'items.options',
-        'items.options.option',
+        'items.choices',
+        'items.choices.choice',
       ],
       select: {
         id: true,
@@ -58,41 +86,22 @@ export class OrderController {
           total: true,
           note: true,
           menu_id: true,
-          // menu: {
-          //   id: true,
-          //   name: true,
-          // },
-          // options: {
-          //   id: true,
-          //   item_id: true,
-          //   option_id: true,
-          //   option: {
-          //     id: true,
-          //     name: true,
-          //   },
-          // },
+          menu: {
+            id: true,
+            name: true,
+          },
+          choices: {
+            choice_id: true,
+            choice: {
+              id: true,
+              name: true,
+              option_id: true,
+            },
+          },
         },
       },
     });
-    return {
-      ...order,
-      items: order.items.map((item) => ({
-        ...item,
-        // options: item.options.map((option) => option.option),
-        // เปลี่ยนเป็น choice
-      })),
-    };
   }
-
-  // @Get(':id/calculate')
-  // async calculate(@Param('id') id: string) {
-  //   const success = this.orderService.calculate(Number(id));
-  //   if (success) {
-  //     return { success: true };
-  //   } else {
-  //     throw new InternalServerErrorException();
-  //   }
-  // }
 
   @Put('item/:id')
   async updateItem(@Param('id') id: string, @Body() item: any) {

@@ -51,6 +51,7 @@ export class AdminPosService {
   }
 
   updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
+    // TODO: implement
     return this.orderService.updateItem(id, item);
   }
 

@@ -61,14 +61,40 @@ export class MenuController {
       where: {
         id: Number(id),
       },
-      relations: ['options'],
-      select: ['id', 'name', 'name_en', 'description', 'price'],
-      // order: {
-      //   options: {
-      //     group_name: 'DESC',
-      //     additional_price: 'ASC',
-      //   },
-      // },
+      relations: ['options', 'options.option', 'options.option.choices'],
+      select: {
+        id: true,
+        name: true,
+        name_en: true,
+        description: true,
+        image_url: true,
+        price: true,
+        options: {
+          menu_id: true,
+          option_id: true,
+          option: {
+            id: true,
+            name: true,
+            is_required: true,
+            allow_multiple: true,
+            choices: {
+              id: true,
+              name: true,
+              additional_price: true,
+            },
+          },
+        },
+      },
+      order: {
+        options: {
+          option: {
+            allow_multiple: 'ASC',
+            choices: {
+              additional_price: 'ASC',
+            },
+          },
+        },
+      },
     });
   }
 }

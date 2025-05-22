@@ -1,5 +1,12 @@
-import { Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { MenuOptionChoice } from '../menu/menu-option-choice.entity';
 
 @Entity({ name: 'OrderItemChoice' })
 export class OrderItemChoice {
@@ -10,9 +17,10 @@ export class OrderItemChoice {
   choice_id: number;
 
   @ManyToOne(() => OrderItem, (orderItem) => orderItem.choices)
+  @JoinColumn({ name: 'item_id' })
   item: OrderItem;
 
-  // @OneToOne(() => MenuOptionChoice)
-  // @JoinColumn({ name: 'choice_id' })
-  // choice: MenuOptionChoice;
+  @OneToOne(() => MenuOptionChoice)
+  @JoinColumn({ name: 'choice_id' })
+  choice: MenuOptionChoice;
 }

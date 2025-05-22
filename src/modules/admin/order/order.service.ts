@@ -17,9 +17,9 @@ export class AdminOrderService {
       },
       relations: [
         'items',
-        // 'items.menu',
-        // 'items.options',
-        // 'items.options.option',
+        'items.menu',
+        'items.choices',
+        'items.choices.choice',
       ],
       select: {
         id: true,
@@ -37,22 +37,17 @@ export class AdminOrderService {
           total: true,
           note: true,
           menu_id: true,
-          // menu: {
-          //   id: true,
-          //   name: true,
-          // },
-          // options: {
-          //   id: true,
-          //   item_id: true,
-          //   // เปลี่ยนเป็น choice
-          //   // option_id: true,
-          //   // option: {
-          //   //   id: true,
-          //   //   name: true,
-          //   //   additional_price: true,
-          //   //   group_name: true,
-          //   // },
-          // },
+          menu: {
+            id: true,
+            name: true,
+          },
+          choices: {
+            choice_id: true,
+            choice: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
     });
