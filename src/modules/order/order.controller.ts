@@ -103,6 +103,19 @@ export class OrderController {
     });
   }
 
+  @Get(':id/status')
+  async getStatus(@Param('id') id: string) {
+    return this.orderService.findOne({
+      where: {
+        id: Number(id),
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+  }
+
   @Put('item/:id')
   async updateItem(@Param('id') id: string, @Body() item: any) {
     const success = await this.orderService.updateItem(Number(id), item);

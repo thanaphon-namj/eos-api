@@ -106,7 +106,7 @@ export class OrderService {
   }
 
   async createItem(id: number, menu: OrderItemDto): Promise<boolean> {
-    const exist = await this.orderItemRepository.findOne({
+    const exist = await this.orderItemRepository.find({
       where: {
         order_id: id,
         menu_id: menu.id,
@@ -115,20 +115,31 @@ export class OrderService {
       relations: ['choices'],
       select: ['id'],
     });
-    if (exist) {
-      const choiceIds = exist.choices.map((choice) => choice.choice_id);
-      const existChoice = compareArray(choiceIds, menu.choices);
-      if (existChoice) {
+    if (exist.length > 0) {
+      if (menu.choices.length > 0) {
+        for await (const item of exist) {
+          const choiceIds = item.choices.map((choice) => choice.choice_id);
+          if (menu.choices.some((choice) => choiceIds.includes(choice))) {
+            if (compareArray(choiceIds, menu.choices)) {
+              await this.orderItemRepository.increment(
+                { id: item.id },
+                'quantity',
+                menu.quantity,
+              );
+            } else {
+              const result = await this.newItem(id, menu);
+              for await (const choiceId of menu.choices) {
+                await this.createItemChoice(result.id, choiceId);
+              }
+            }
+          }
+        }
+      } else {
         await this.orderItemRepository.increment(
-          { id: exist.id },
+          { id: exist[0].id },
           'quantity',
           menu.quantity,
         );
-      } else {
-        const result = await this.newItem(id, menu);
-        for await (const choiceId of menu.choices) {
-          await this.createItemChoice(result.id, choiceId);
-        }
       }
     } else {
       const result = await this.newItem(id, menu);
@@ -163,7 +174,6 @@ export class OrderService {
       select: ['choice_id'],
     });
     if (!compareArray(choiceIds, menu.choices)) {
-      console.log('delete');
       await this.orderItemChoiceRepository.delete({ item_id: id });
       for await (const choiceId of menu.choices) {
         await this.createItemChoice(id, choiceId);
