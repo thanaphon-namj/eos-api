@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ScheduleStatus {
   Pending = 'pending',
-  Successfully = 'successfully',
+  Success = 'success',
   Failed = 'failed',
 }
 

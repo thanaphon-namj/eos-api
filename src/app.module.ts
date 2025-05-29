@@ -17,7 +17,7 @@ import { MenuModule } from './modules/menu/menu.module';
 import { SettingModule } from './modules/setting/setting.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { UploadModule } from './modules/upload/upload.module';
-// import { TaskModule } from './modules/task/task.module';
+import { TaskModule } from './modules/task/task.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DB } from './environments';
@@ -56,7 +56,7 @@ import { DB } from './environments';
     SettingModule,
     AdminModule,
     UploadModule,
-    // TaskModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

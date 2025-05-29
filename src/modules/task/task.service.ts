@@ -1,8 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { Schedule, ScheduleStatus } from './schedule.entity';
+import { OrderStatus } from '../order/order.entity';
+import { OrderService } from '../order/order.service';
+import {
+  getEndOfDay,
+  getStartOfDay,
+  isMoreThanOrEqual,
+  today,
+} from '../../utils/date';
 
 @Injectable()
 export class TaskService {
@@ -11,30 +19,48 @@ export class TaskService {
   constructor(
     @InjectRepository(Schedule)
     private scheduleRepository: Repository<Schedule>,
+    private orderService: OrderService,
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
-    // TODO: query schedule for execution
     const schedules = await this.scheduleRepository.find({
       where: {
-        status: ScheduleStatus.Pending,
+        status: In([ScheduleStatus.Pending, ScheduleStatus.Failed]),
       },
-      select: ['execute_time', 'order_id'],
+      select: ['id', 'execute_time', 'order_id'],
     });
 
-    for (const schedule of schedules) {
-      // TODO: update order status = cancelled
-      console.log(schedule);
+    for await (const schedule of schedules) {
+      if (isMoreThanOrEqual(schedule.execute_time, 15)) {
+        try {
+          await this.orderService.cancel(schedule.order_id);
+          await this.scheduleRepository.update(schedule.id, {
+            status: ScheduleStatus.Success,
+          });
+          this.logger.log(`Order ${schedule.order_id} is cancelled.`);
+        } catch (error) {
+          this.logger.error(`Order ${schedule.order_id} is failed: ${error}`);
+          await this.scheduleRepository.update(schedule.id, {
+            status: ScheduleStatus.Failed,
+          });
+        }
+      }
     }
   }
 
-  create(orderId: number) {
-    const schedule = new Schedule();
-    // TODO: calculate execute time = current time + 20min
-    schedule.execute_time = new Date();
-    schedule.status = ScheduleStatus.Pending;
-    schedule.order_id = orderId;
-    return this.scheduleRepository.save(schedule);
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleCronDaily() {
+    const current = today();
+    const orders = await this.orderService.findAll({
+      where: {
+        status: OrderStatus.Confirmed,
+        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
+      },
+    });
+    for await (const order of orders) {
+      await this.orderService.cancel(order.id);
+      this.logger.log(`Order ${order.id} is cancelled.`);
+    }
   }
 }

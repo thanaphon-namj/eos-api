@@ -10,10 +10,16 @@ import {
 import { Order, OrderStatus } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderItemChoice } from './order-item-choice.entity';
+import { Schedule, ScheduleStatus } from '../task/schedule.entity';
 import { OrderDto, OrderItemDto } from './dto/order.dto';
 import { generateCode } from '../../utils/generate';
 import { compareArray } from '../../utils/array';
-import { getEndOfDay, getStartOfDay, today } from '../../utils/date';
+import {
+  addMinutes,
+  getEndOfDay,
+  getStartOfDay,
+  today,
+} from '../../utils/date';
 
 @Injectable()
 export class OrderService {
@@ -24,12 +30,15 @@ export class OrderService {
     private orderItemRepository: Repository<OrderItem>,
     @InjectRepository(OrderItemChoice)
     private orderItemChoiceRepository: Repository<OrderItemChoice>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: Repository<Schedule>,
   ) {}
 
   async create(orderDto: OrderDto): Promise<Order> {
-    const result = await this.orderRepository.findOne({
+    const current = today();
+    const previous = await this.orderRepository.findOne({
       where: {
-        created_at: Between(getStartOfDay(), getEndOfDay()),
+        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
       },
       select: ['code'],
       order: {
@@ -37,11 +46,13 @@ export class OrderService {
       },
     });
     const order = new Order();
-    order.code = generateCode(result ? result.code : '0');
+    order.code = generateCode(previous ? previous.code : '0');
     order.name = orderDto.name;
     order.status = OrderStatus.Pending;
-    order.created_at = today;
-    return this.orderRepository.save(order);
+    order.created_at = today();
+    const result = await this.orderRepository.save(order);
+    await this.createTask(result.id);
+    return result;
   }
 
   findAll(options?: FindManyOptions<Order>): Promise<Order[]> {
@@ -86,6 +97,7 @@ export class OrderService {
       updated_at: new Date(),
     });
     await this.calculate(id);
+    await this.scheduleRepository.delete({ order_id: id });
     return result.affected > 0;
   }
 
@@ -245,5 +257,13 @@ export class OrderService {
       total,
     });
     return result.affected > 0;
+  }
+
+  createTask(id: number) {
+    const schedule = new Schedule();
+    schedule.execute_time = addMinutes(15);
+    schedule.status = ScheduleStatus.Pending;
+    schedule.order_id = id;
+    return this.scheduleRepository.save(schedule);
   }
 }

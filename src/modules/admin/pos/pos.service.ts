@@ -4,16 +4,17 @@ import { OrderService } from '../../order/order.service';
 import { OrderStatus } from '../../order/order.entity';
 import { OrderDto, OrderItemDto } from '../../order/dto/order.dto';
 import { QueryDto } from '../order/dto/query.dto';
-import { getEndOfDay, getStartOfDay } from '../../../utils/date';
+import { getEndOfDay, getStartOfDay, today } from '../../../utils/date';
 
 @Injectable()
 export class AdminPosService {
   constructor(private orderService: OrderService) {}
 
   async getStats() {
+    const current = today();
     const result = await this.orderService.findAll({
       where: {
-        created_at: Between(getStartOfDay(), getEndOfDay()),
+        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
       },
       select: ['status'],
     });
@@ -34,9 +35,10 @@ export class AdminPosService {
   }
 
   getInbox(query: QueryDto) {
+    const current = today();
     return this.orderService.findAllBy({
       status: query.status,
-      created_at: Between(getStartOfDay(), getEndOfDay()),
+      created_at: Between(getStartOfDay(current), getEndOfDay(current)),
     });
   }
 
