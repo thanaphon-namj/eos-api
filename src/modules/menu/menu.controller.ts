@@ -16,7 +16,7 @@ export class MenuController {
         },
       },
       relations: ['category'],
-      select: ['id', 'name', 'name_en', 'image_url', 'price'],
+      select: ['id', 'name', 'name_en', 'image_url', 'price', 'status'],
     });
   }
 
@@ -43,6 +43,7 @@ export class MenuController {
         name_en: true,
         image_url: true,
         price: true,
+        status: true,
         category: {
           id: true,
           name: true,

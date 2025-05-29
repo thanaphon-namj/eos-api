@@ -49,7 +49,7 @@ export class TaskService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_DAY_AT_11PM)
   async handleCronDaily() {
     const current = today();
     const orders = await this.orderService.findAll({
