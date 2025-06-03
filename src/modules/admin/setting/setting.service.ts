@@ -11,6 +11,26 @@ export class AdminSettingService {
     private menuService: MenuService,
   ) {}
 
+  async create(setting: Record<string, any>) {
+    for await (const [name, value] of Object.entries(setting)) {
+      const exist = await this.settingService.findOne({
+        where: {
+          name,
+        },
+      });
+      if (exist) {
+        await this.settingService.update(exist.id, value);
+      } else {
+        await this.settingService.create(name, value);
+      }
+    }
+    return true;
+  }
+
+  clear() {
+    return this.settingService.clear();
+  }
+
   createBanner(banner: BannerDto) {
     return this.menuService.createBanner(banner);
   }
@@ -27,6 +47,10 @@ export class AdminSettingService {
 
   deleteBanner(id: number) {
     return this.menuService.deleteBanner(id);
+  }
+
+  getAllNews() {
+    return this.settingService.findAllNews();
   }
 
   getAllCategory() {

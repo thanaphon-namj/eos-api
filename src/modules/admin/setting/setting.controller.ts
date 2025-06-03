@@ -15,6 +15,21 @@ import { BannerDto } from '../../menu/dto/category.dto';
 export class AdminSettingController {
   constructor(private adminSettingService: AdminSettingService) {}
 
+  @Post()
+  async creat(@Body() setting: Record<string, any>) {
+    const success = await this.adminSettingService.create(setting);
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Delete()
+  clear() {
+    return this.adminSettingService.clear();
+  }
+
   @Post('banner')
   async createBanner(@Body() banner: BannerDto) {
     const success = await this.adminSettingService.createBanner(banner);
@@ -55,7 +70,7 @@ export class AdminSettingController {
 
   @Get('news')
   getAllNews() {
-    return [];
+    return this.adminSettingService.getAllNews();
   }
 
   @Get('category')
