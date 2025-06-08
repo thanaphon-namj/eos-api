@@ -101,6 +101,7 @@ export class AdminMenuService {
           id: true,
           name: true,
           additional_price: true,
+          is_default: true,
         },
       },
       order: {

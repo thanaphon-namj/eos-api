@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { OrderService } from '../../order/order.service';
 import { QueryDto } from './dto/query.dto';
 
@@ -7,7 +8,17 @@ export class AdminOrderService {
   constructor(private orderService: OrderService) {}
 
   getAll(query: QueryDto) {
-    return this.orderService.findAllBy({ status: query.status });
+    const where = {
+      status: query.status,
+    };
+    if (query.from && query.to) {
+      where['created_at'] = Between(query.from, query.to);
+    } else if (query.from) {
+      where['created_at'] = MoreThanOrEqual(query.from);
+    } else if (query.to) {
+      where['created_at'] = LessThanOrEqual(query.to);
+    }
+    return this.orderService.findAllBy(where);
   }
 
   async getById(id: number) {
@@ -20,6 +31,7 @@ export class AdminOrderService {
         'items.menu',
         'items.choices',
         'items.choices.choice',
+        'admin',
       ],
       select: {
         id: true,
@@ -48,6 +60,10 @@ export class AdminOrderService {
               name: true,
             },
           },
+        },
+        admin: {
+          id: true,
+          name: true,
         },
       },
     });

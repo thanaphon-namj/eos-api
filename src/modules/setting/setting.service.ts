@@ -63,7 +63,7 @@ export class SettingService {
         })
         .pipe(
           catchError(() => {
-            throw 'An error happened!';
+            throw 'Facebook: An error happened!';
           }),
         ),
     );

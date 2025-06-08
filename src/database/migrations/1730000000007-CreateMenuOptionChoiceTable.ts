@@ -40,6 +40,11 @@ export class CreateMenuOptionChoiceTable1730000000007
           //   default: true,
           // },
           {
+            name: 'is_default',
+            type: 'boolean',
+            default: false,
+          },
+          {
             name: 'option_id',
             type: 'int',
           },

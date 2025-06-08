@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { Admin } from '../user/admin.entity';
 
 export enum OrderStatus {
   Pending = 'pending',
@@ -42,4 +50,8 @@ export class Order {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   items: OrderItem[];
+
+  @OneToOne(() => Admin)
+  @JoinColumn({ name: 'admin_id' })
+  admin: Admin;
 }

@@ -108,6 +108,7 @@ export class MenuService {
       const menuOptionChoice = new MenuOptionChoice();
       menuOptionChoice.name = choice.name;
       menuOptionChoice.additional_price = choice.additional_price;
+      menuOptionChoice.is_default = choice.is_default;
       menuOptionChoice.option_id = result.id;
       await this.menuOptionChoiceRepository.save(menuOptionChoice);
     }

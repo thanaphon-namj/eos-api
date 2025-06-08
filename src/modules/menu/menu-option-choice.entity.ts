@@ -25,6 +25,9 @@ export class MenuOptionChoice {
   // is_active: boolean;
 
   @Column()
+  is_default: boolean;
+
+  @Column()
   option_id: number;
 
   @ManyToOne(() => MenuOption, (option) => option.choices)
