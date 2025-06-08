@@ -79,6 +79,7 @@ export class OrderService {
         created_at: 'DESC',
         updated_at: 'DESC',
       },
+      take: 50,
     });
   }
 
