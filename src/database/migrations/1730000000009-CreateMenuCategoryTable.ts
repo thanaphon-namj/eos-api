@@ -59,6 +59,7 @@ export class CreateMenuCategoryTable1730000000009
         onDelete: 'RESTRICT',
       }),
     );
+    // TODO: check onDelete
     await queryRunner.createForeignKey(
       'MenuCategory',
       new TableForeignKey({

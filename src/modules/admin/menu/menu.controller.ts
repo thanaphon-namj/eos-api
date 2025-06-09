@@ -92,10 +92,17 @@ export class AdminMenuController {
 
   @Delete('option/:id')
   async deleteOption(@Param('id') id: string) {
-    const success = await this.adminMenuService.deleteOption(Number(id));
-    if (success) {
-      return { success: true };
-    } else {
+    try {
+      const success = await this.adminMenuService.deleteOption(Number(id));
+      if (success) {
+        return { success: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (error) {
+      if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new BadRequestException("Can't delete option.");
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -120,10 +127,17 @@ export class AdminMenuController {
 
   @Delete('category/:id')
   async deleteCategory(@Param('id') id: string) {
-    const success = await this.adminMenuService.deleteCategory(Number(id));
-    if (success) {
-      return { success: true };
-    } else {
+    try {
+      const success = await this.adminMenuService.deleteCategory(Number(id));
+      if (success) {
+        return { success: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (error) {
+      if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new BadRequestException("Can't delete category.");
+      }
       throw new InternalServerErrorException();
     }
   }

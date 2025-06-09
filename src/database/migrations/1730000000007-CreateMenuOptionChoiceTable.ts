@@ -51,6 +51,7 @@ export class CreateMenuOptionChoiceTable1730000000007
         ],
       }),
     );
+    // TODO: check if onDelete error
     await queryRunner.createForeignKey(
       'OrderItemChoice',
       new TableForeignKey({
@@ -61,6 +62,7 @@ export class CreateMenuOptionChoiceTable1730000000007
         onDelete: 'RESTRICT',
       }),
     );
+    // TODO: check if onDelete error
     await queryRunner.createForeignKey(
       'MenuOptionChoice',
       new TableForeignKey({
