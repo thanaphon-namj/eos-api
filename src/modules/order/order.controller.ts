@@ -71,6 +71,7 @@ export class OrderController {
         'items.menu',
         'items.choices',
         'items.choices.choice',
+        'admin',
       ],
       select: {
         id: true,
@@ -80,6 +81,8 @@ export class OrderController {
         discount: true,
         total: true,
         status: true,
+        created_at: true,
+        updated_at: true,
         items: {
           id: true,
           quantity: true,
@@ -98,6 +101,10 @@ export class OrderController {
               option_id: true,
             },
           },
+        },
+        admin: {
+          id: true,
+          name: true,
         },
       },
     });

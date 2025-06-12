@@ -82,6 +82,7 @@ export class MenuController {
               id: true,
               name: true,
               additional_price: true,
+              is_default: true,
             },
           },
         },
