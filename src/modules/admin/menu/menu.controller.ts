@@ -79,13 +79,20 @@ export class AdminMenuController {
 
   @Put('option/:id')
   async updateOption(@Param('id') id: string, @Body() option: OptionDto) {
-    const success = await this.adminMenuService.updateOption(
-      Number(id),
-      option,
-    );
-    if (success) {
-      return { success: true };
-    } else {
+    try {
+      const success = await this.adminMenuService.updateOption(
+        Number(id),
+        option,
+      );
+      if (success) {
+        return { success: true };
+      } else {
+        throw new InternalServerErrorException();
+      }
+    } catch (error) {
+      if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new BadRequestException("Can't delete choice.");
+      }
       throw new InternalServerErrorException();
     }
   }
