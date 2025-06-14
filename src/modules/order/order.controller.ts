@@ -92,6 +92,7 @@ export class OrderController {
           menu: {
             id: true,
             name: true,
+            status: true,
           },
           choices: {
             choice_id: true,
@@ -134,8 +135,13 @@ export class OrderController {
   }
 
   @Delete('item/:id')
-  removeItem(@Param('id') id: string) {
-    return this.orderService.deleteItem(Number(id));
+  async removeItem(@Param('id') id: string) {
+    const success = await this.orderService.deleteItem(Number(id));
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Post(':id/confirm')
