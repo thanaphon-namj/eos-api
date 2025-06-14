@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Between } from 'typeorm';
 import { OrderService } from '../../order/order.service';
 import { OrderStatus } from '../../order/order.entity';
-import { OrderDto, OrderItemDto } from '../../order/dto/order.dto';
 import { QueryDto } from '../order/dto/query.dto';
 import { getEndOfDay, getStartOfDay, today } from '../../../utils/date';
 
@@ -34,30 +33,39 @@ export class AdminPosService {
     return stats;
   }
 
-  getInbox(query: QueryDto) {
+  async getInbox(query: QueryDto) {
+    const { page = 1, limit = 50 } = query;
+    const skip = (page - 1) * limit;
     const current = today();
-    return this.orderService.findAllBy({
-      status: query.status,
-      created_at: Between(getStartOfDay(current), getEndOfDay(current)),
+    const [orders, total] = await this.orderService.getPaginated({
+      where: {
+        status: query.status,
+        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
+      },
+      relations: ['items'],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        total: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        items: {
+          id: true,
+        },
+      },
+      order: {
+        created_at: 'DESC',
+        updated_at: 'DESC',
+      },
+      skip,
+      take: limit,
     });
-  }
-
-  addOrderItem(id: number, item: OrderItemDto) {
-    return this.orderService.createItem(id, item);
-  }
-
-  async updateOrder(id: number, item: OrderDto): Promise<boolean> {
-    const success = await this.orderService.update(id, item);
-    await this.orderService.calculate(id);
-    return success;
-  }
-
-  updateOrderItem(id: number, item: OrderItemDto): Promise<boolean> {
-    // TODO: implement
-    return this.orderService.updateItem(id, item);
-  }
-
-  removeOrderItem(id: number): Promise<boolean> {
-    return this.orderService.deleteItem(id);
+    return {
+      data: orders,
+      total,
+      more: skip + orders.length < total,
+    };
   }
 }

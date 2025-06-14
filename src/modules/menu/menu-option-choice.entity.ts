@@ -18,12 +18,6 @@ export class MenuOptionChoice {
   @Column()
   additional_price: number;
 
-  // @Column()
-  // status: MenuStatus;
-
-  // @Column()
-  // is_active: boolean;
-
   @Column()
   is_default: boolean;
 

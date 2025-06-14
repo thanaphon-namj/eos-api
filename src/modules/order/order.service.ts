@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Between,
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
+import { Between, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Order, OrderStatus } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderItemChoice } from './order-item-choice.entity';
@@ -59,43 +53,19 @@ export class OrderService {
     return this.orderRepository.find(options);
   }
 
-  findAllBy(where: FindOptionsWhere<Order>): Promise<Order[]> {
-    return this.orderRepository.find({
-      where,
-      relations: ['items'],
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        total: true,
-        status: true,
-        created_at: true,
-        updated_at: true,
-        items: {
-          id: true,
-        },
-      },
-      order: {
-        created_at: 'DESC',
-        updated_at: 'DESC',
-      },
-      take: 50,
-    });
+  getPaginated(options: FindManyOptions<Order>): Promise<[Order[], number]> {
+    return this.orderRepository.findAndCount(options);
   }
 
   findOne(options: FindOneOptions<Order>): Promise<Order> {
     return this.orderRepository.findOne(options);
   }
 
-  async update(id: number, orderDto: OrderDto): Promise<boolean> {
-    const result = await this.orderRepository.update(id, orderDto);
-    return result.affected > 0;
-  }
-
   async confirm(id: number): Promise<boolean> {
+    const current = today();
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Confirmed,
-      updated_at: new Date(),
+      updated_at: current,
     });
     await this.calculate(id);
     await this.scheduleRepository.delete({ order_id: id });
@@ -126,34 +96,20 @@ export class OrderService {
         note: menu.note,
       },
       relations: ['choices'],
-      select: ['id'],
+      select: ['id', 'choices'],
     });
-    if (exist.length > 0) {
-      if (menu.choices.length > 0) {
-        for await (const item of exist) {
-          const choiceIds = item.choices.map((choice) => choice.choice_id);
-          if (menu.choices.some((choice) => choiceIds.includes(choice))) {
-            if (compareArray(choiceIds, menu.choices)) {
-              await this.orderItemRepository.increment(
-                { id: item.id },
-                'quantity',
-                menu.quantity,
-              );
-            } else {
-              const result = await this.newItem(id, menu);
-              for await (const choiceId of menu.choices) {
-                await this.createItemChoice(result.id, choiceId);
-              }
-            }
-          }
-        }
-      } else {
-        await this.orderItemRepository.increment(
-          { id: exist[0].id },
-          'quantity',
-          menu.quantity,
-        );
-      }
+    const matched = exist.find((item) => {
+      const choiceIds = item.choices.map((choice) => choice.choice_id);
+      return compareArray(choiceIds, menu.choices);
+    });
+    if (matched) {
+      await this.orderItemRepository.increment(
+        {
+          id: matched.id,
+        },
+        'quantity',
+        menu.quantity,
+      );
     } else {
       const result = await this.newItem(id, menu);
       for await (const choiceId of menu.choices) {
@@ -180,12 +136,13 @@ export class OrderService {
   }
 
   async updateItem(id: number, menu: OrderItemDto): Promise<boolean> {
-    const choiceIds = await this.orderItemChoiceRepository.find({
+    const exist = await this.orderItemChoiceRepository.find({
       where: {
         item_id: id,
       },
       select: ['choice_id'],
     });
+    const choiceIds = exist.map((choice) => choice.choice_id);
     if (!compareArray(choiceIds, menu.choices)) {
       await this.orderItemChoiceRepository.delete({ item_id: id });
       for await (const choiceId of menu.choices) {
@@ -197,7 +154,9 @@ export class OrderService {
       note: menu.note,
     });
     const { order_id } = await this.orderItemRepository.findOne({
-      where: { id },
+      where: {
+        id,
+      },
       select: ['order_id'],
     });
     await this.calculate(order_id);
@@ -206,7 +165,9 @@ export class OrderService {
 
   async deleteItem(id: number): Promise<boolean> {
     const { order_id } = await this.orderItemRepository.findOne({
-      where: { id },
+      where: {
+        id,
+      },
       select: ['order_id'],
     });
     const result = await this.orderItemRepository.delete(id);
@@ -243,9 +204,10 @@ export class OrderService {
         total: price * item.quantity,
       });
     }
-    const subTotal = await this.orderItemRepository.sum('total', {
+    let subTotal = await this.orderItemRepository.sum('total', {
       order_id: id,
     });
+    if (!subTotal) subTotal = 0;
     const order = await this.orderRepository.findOne({
       where: {
         id,
@@ -254,7 +216,7 @@ export class OrderService {
     });
     const total = subTotal - order.discount;
     const result = await this.orderRepository.update(id, {
-      subtotal: subTotal || 0,
+      subtotal: subTotal,
       total,
     });
     return result.affected > 0;

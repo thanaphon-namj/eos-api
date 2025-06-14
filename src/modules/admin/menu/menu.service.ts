@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Like } from 'typeorm';
 import { MenuService } from '../../menu/menu.service';
 import { MenuDto } from '../../menu/dto/menu.dto';
 import { OptionDto } from '../../menu/dto/option.dto';
@@ -14,19 +13,23 @@ export class AdminMenuService {
     return this.menuService.create(menu);
   }
 
-  getAll(query: QueryDto) {
-    const where = {
-      category: {
-        parent_id: query.category_id,
+  async getAll(query: QueryDto) {
+    const { page = 1, limit = 50 } = query;
+    const skip = (page - 1) * limit;
+    const [items, total] = await this.menuService.getPaginated({
+      where: {
+        category: {
+          parent_id: query.category_id,
+        },
       },
-    };
-    if (query.q) {
-      where['name'] = Like(`%${query.q}%`);
-    }
-    return this.menuService.findAll({
-      where,
       select: ['id', 'name', 'image_url'],
+      skip,
+      take: limit,
     });
+    return {
+      data: items,
+      more: skip + items.length < total,
+    };
   }
 
   getById(id: number) {

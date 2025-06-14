@@ -49,11 +49,6 @@ export class CreateMenuTable1730000000005 implements MigrationInterface {
             type: 'varchar',
             length: '10',
           },
-          // {
-          //   name: 'is_active',
-          //   type: 'boolean',
-          //   default: true,
-          // },
           {
             name: 'is_recommended',
             type: 'boolean',
@@ -73,7 +68,6 @@ export class CreateMenuTable1730000000005 implements MigrationInterface {
         columnNames: ['menu_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Menu',
-        onDelete: 'RESTRICT',
       }),
     );
   }

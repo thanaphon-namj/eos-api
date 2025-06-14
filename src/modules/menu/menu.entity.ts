@@ -37,9 +37,6 @@ export class Menu {
   @Column()
   status: MenuStatus;
 
-  // @Column()
-  // is_active: boolean;
-
   @Column()
   is_recommended: boolean;
 

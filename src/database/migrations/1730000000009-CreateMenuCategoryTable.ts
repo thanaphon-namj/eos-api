@@ -37,10 +37,6 @@ export class CreateMenuCategoryTable1730000000009
             length: '255',
             isNullable: true,
           },
-          // {
-          //   name: 'priority',
-          //   type: 'int',
-          // },
           {
             name: 'parent_id',
             type: 'int',
@@ -56,10 +52,8 @@ export class CreateMenuCategoryTable1730000000009
         columnNames: ['category_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuCategory',
-        onDelete: 'RESTRICT',
       }),
     );
-    // TODO: check onDelete
     await queryRunner.createForeignKey(
       'MenuCategory',
       new TableForeignKey({
@@ -67,7 +61,6 @@ export class CreateMenuCategoryTable1730000000009
         columnNames: ['parent_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuCategory',
-        onDelete: 'RESTRICT',
       }),
     );
   }

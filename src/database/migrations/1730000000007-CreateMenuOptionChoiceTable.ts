@@ -29,16 +29,6 @@ export class CreateMenuOptionChoiceTable1730000000007
             name: 'additional_price',
             type: 'double',
           },
-          // {
-          //   name: 'status',
-          //   type: 'varchar',
-          //   length: '10',
-          // },
-          // {
-          //   name: 'is_active',
-          //   type: 'boolean',
-          //   default: true,
-          // },
           {
             name: 'is_default',
             type: 'boolean',
@@ -51,7 +41,6 @@ export class CreateMenuOptionChoiceTable1730000000007
         ],
       }),
     );
-    // TODO: check if onDelete error
     await queryRunner.createForeignKey(
       'OrderItemChoice',
       new TableForeignKey({
@@ -59,10 +48,8 @@ export class CreateMenuOptionChoiceTable1730000000007
         columnNames: ['choice_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuOptionChoice',
-        onDelete: 'RESTRICT',
       }),
     );
-    // TODO: check if onDelete error
     await queryRunner.createForeignKey(
       'MenuOptionChoice',
       new TableForeignKey({
@@ -70,7 +57,6 @@ export class CreateMenuOptionChoiceTable1730000000007
         columnNames: ['option_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuOption',
-        onDelete: 'RESTRICT',
       }),
     );
   }

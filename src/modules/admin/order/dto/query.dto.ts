@@ -4,4 +4,6 @@ export interface QueryDto {
   status: OrderStatus;
   from: string;
   to: string;
+  page: number;
+  limit: number;
 }

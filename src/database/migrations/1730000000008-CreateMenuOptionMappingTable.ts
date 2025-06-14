@@ -33,7 +33,6 @@ export class CreateMenuOptionMappingTable1730000000008
         columnNames: ['menu_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Menu',
-        onDelete: 'CASCADE',
       }),
     );
     await queryRunner.createForeignKey(
@@ -43,7 +42,6 @@ export class CreateMenuOptionMappingTable1730000000008
         columnNames: ['option_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'MenuOption',
-        onDelete: 'RESTRICT',
       }),
     );
   }

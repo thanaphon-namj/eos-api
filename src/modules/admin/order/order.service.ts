@@ -7,7 +7,9 @@ import { QueryDto } from './dto/query.dto';
 export class AdminOrderService {
   constructor(private orderService: OrderService) {}
 
-  getAll(query: QueryDto) {
+  async getAll(query: QueryDto) {
+    const { page = 1, limit = 50 } = query;
+    const skip = (page - 1) * limit;
     const where = {
       status: query.status,
     };
@@ -18,7 +20,32 @@ export class AdminOrderService {
     } else if (query.to) {
       where['created_at'] = LessThanOrEqual(query.to);
     }
-    return this.orderService.findAllBy(where);
+    const [orders, total] = await this.orderService.getPaginated({
+      where,
+      relations: ['items'],
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        total: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        items: {
+          id: true,
+        },
+      },
+      order: {
+        created_at: 'DESC',
+        updated_at: 'DESC',
+      },
+      skip,
+      take: limit,
+    });
+    return {
+      data: orders,
+      more: skip + orders.length < total,
+    };
   }
 
   async getById(id: number) {

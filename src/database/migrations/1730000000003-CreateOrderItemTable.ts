@@ -50,7 +50,6 @@ export class CreateOrderItemTable1730000000003 implements MigrationInterface {
         columnNames: ['order_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Order',
-        onDelete: 'RESTRICT',
       }),
     );
   }

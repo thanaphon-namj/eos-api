@@ -39,7 +39,10 @@ export class MenuService {
     menu.description = menuDto.description;
     menu.image_url = menuDto.image_url;
     menu.price = menuDto.price;
-    menu.status = MenuStatus.Available;
+    menu.status =
+      menuDto.status === 'outofstock'
+        ? MenuStatus.OutOfStock
+        : MenuStatus.Available;
     menu.category_id = menuDto.category_id;
     const result = await this.menuRepository.save(menu);
     for await (const optionId of menuDto.options) {
@@ -53,6 +56,10 @@ export class MenuService {
 
   findAll(options?: FindManyOptions<Menu>): Promise<Menu[]> {
     return this.menuRepository.find(options);
+  }
+
+  getPaginated(options: FindManyOptions<Menu>): Promise<[Menu[], number]> {
+    return this.menuRepository.findAndCount(options);
   }
 
   findOne(options: FindOneOptions<Menu>): Promise<Menu> {
@@ -70,24 +77,22 @@ export class MenuService {
       is_recommended: menu.is_recommended,
       category_id: menu.category_id,
     });
-    if (menu.options.length > 0) {
-      const options = await this.menuOptionMappingRepository.find({
-        where: {
-          menu_id: id,
-        },
-        select: ['option_id'],
-      });
-      const Ids = options.map((o) => o.option_id);
-      if (!compareArray(menu.options, Ids)) {
-        if (Ids.length > 0) {
-          await this.menuOptionMappingRepository.delete({ menu_id: id });
-        }
-        for await (const optionId of menu.options) {
-          const option = new MenuOptionMapping();
-          option.menu_id = id;
-          option.option_id = optionId;
-          await this.menuOptionMappingRepository.save(option);
-        }
+    const options = await this.menuOptionMappingRepository.find({
+      where: {
+        menu_id: id,
+      },
+      select: ['option_id'],
+    });
+    const optionIds = options.map((option) => option.option_id);
+    if (!compareArray(optionIds, menu.options)) {
+      if (optionIds.length > 0) {
+        await this.menuOptionMappingRepository.delete({ menu_id: id });
+      }
+      for await (const optionId of menu.options) {
+        const option = new MenuOptionMapping();
+        option.menu_id = id;
+        option.option_id = optionId;
+        await this.menuOptionMappingRepository.save(option);
       }
     }
     return result.affected > 0;
@@ -129,25 +134,21 @@ export class MenuService {
       is_required: option.is_required,
       allow_multiple: option.allow_multiple,
     });
-    if (option.choices.length > 0) {
-      const choices = await this.menuOptionChoiceRepository.find({
-        where: {
-          option_id: id,
-        },
-        select: ['id', 'name', 'additional_price'],
-      });
-      if (!compareArray(option.choices, choices)) {
-        if (choices.length > 0) {
-          await this.menuOptionChoiceRepository.delete({ option_id: id });
-        }
-        for await (const choice of option.choices) {
-          const menuOptionChoice = new MenuOptionChoice();
-          menuOptionChoice.name = choice.name;
-          menuOptionChoice.additional_price = choice.additional_price;
-          menuOptionChoice.is_default = choice.is_default;
-          menuOptionChoice.option_id = id;
-          await this.menuOptionChoiceRepository.save(menuOptionChoice);
-        }
+    const choices = await this.menuOptionChoiceRepository.find({
+      where: {
+        option_id: id,
+      },
+      select: ['id', 'name', 'additional_price', 'is_default'],
+    });
+    if (!compareArray(choices, option.choices)) {
+      await this.menuOptionChoiceRepository.delete({ option_id: id });
+      for await (const choice of option.choices) {
+        const menuOptionChoice = new MenuOptionChoice();
+        menuOptionChoice.name = choice.name;
+        menuOptionChoice.additional_price = choice.additional_price;
+        menuOptionChoice.is_default = choice.is_default;
+        menuOptionChoice.option_id = id;
+        await this.menuOptionChoiceRepository.save(menuOptionChoice);
       }
     }
     return result.affected > 0;

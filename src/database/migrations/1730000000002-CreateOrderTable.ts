@@ -72,7 +72,6 @@ export class CreateOrderTable1730000000002 implements MigrationInterface {
         columnNames: ['admin_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'Admin',
-        onDelete: 'RESTRICT',
       }),
     );
   }
