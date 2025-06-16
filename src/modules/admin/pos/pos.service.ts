@@ -3,14 +3,14 @@ import { Between } from 'typeorm';
 import { OrderService } from '../../order/order.service';
 import { OrderStatus } from '../../order/order.entity';
 import { QueryDto } from '../order/dto/query.dto';
-import { getEndOfDay, getStartOfDay, today } from '../../../utils/date';
+import { getEndOfDay, getStartOfDay } from '../../../utils/date';
 
 @Injectable()
 export class AdminPosService {
   constructor(private orderService: OrderService) {}
 
   async getStats() {
-    const current = today();
+    const current = new Date();
     const result = await this.orderService.findAll({
       where: {
         created_at: Between(getStartOfDay(current), getEndOfDay(current)),
@@ -36,13 +36,11 @@ export class AdminPosService {
   async getInbox(query: QueryDto) {
     const { page = 1, limit = 50 } = query;
     const skip = (page - 1) * limit;
-    const current = today();
-    const start = getStartOfDay(current);
-    const end = getEndOfDay(current);
+    const current = new Date();
     const [orders, total] = await this.orderService.getPaginated({
       where: {
         status: query.status,
-        created_at: Between(start, end),
+        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
       },
       relations: ['items'],
       select: {
@@ -68,9 +66,6 @@ export class AdminPosService {
       data: orders,
       total,
       more: skip + orders.length < total,
-      current_date: current,
-      start_date: start,
-      end_date: end,
     };
   }
 }

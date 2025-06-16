@@ -1,7 +1,3 @@
-export const today = () => {
-  return new Date();
-};
-
 export const getStartOfDay = (date: Date) => {
   return new Date(
     date.getFullYear(),
@@ -27,12 +23,12 @@ export const getEndOfDay = (date: Date) => {
 };
 
 export const addMinutes = (minutes: number) => {
-  const current = today();
+  const current = new Date();
   return new Date(current.getTime() + minutes * 60 * 1000);
 };
 
 export const isMoreThanOrEqual = (date: Date, minutes: number) => {
-  const current = today();
+  const current = new Date();
   const diffInMs = current.getTime() - date.getTime();
   const diffInMinutes = diffInMs / (1000 * 60);
   return diffInMinutes >= minutes;
