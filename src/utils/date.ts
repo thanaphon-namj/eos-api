@@ -4,20 +4,20 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Bangkok');
 
-export const getStartOfDay = (date: Date) => {
-  return dayjs(date).startOf('day').toDate();
+export const getStartOfDay = () => {
+  return dayjs.tz().startOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
-export const getEndOfDay = (date: Date) => {
-  return dayjs(date).endOf('day').toDate();
+export const getEndOfDay = () => {
+  return dayjs.tz().endOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const addMinutes = (minutes: number) => {
-  return dayjs().add(minutes, 'minute').toDate();
+  return dayjs.tz().add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
 };
 
-export const isMoreThanOrEqual = (date: Date, minutes: number) => {
-  return dayjs().diff(date, 'minute') >= minutes;
+export const isMoreThanOrEqual = (date: string, minutes: number) => {
+  return dayjs.tz().diff(date, 'minute') >= minutes;
 };
 
 export default dayjs;

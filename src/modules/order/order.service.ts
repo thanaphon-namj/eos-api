@@ -28,10 +28,9 @@ export class OrderService {
   ) {}
 
   async create(orderDto: OrderDto): Promise<Order> {
-    const current = dayjs().toDate();
     const previous = await this.orderRepository.findOne({
       where: {
-        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
+        created_at: Between(getStartOfDay(), getEndOfDay()),
       },
       select: ['code'],
       order: {
@@ -42,7 +41,7 @@ export class OrderService {
     order.code = generateCode(previous ? previous.code : '0');
     order.name = orderDto.name;
     order.status = OrderStatus.Pending;
-    order.created_at = current;
+    order.created_at = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
     const result = await this.orderRepository.save(order);
     await this.createTask(result.id);
     return result;
@@ -63,7 +62,7 @@ export class OrderService {
   async confirm(id: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Confirmed,
-      updated_at: dayjs().toDate(),
+      updated_at: dayjs.tz().format('YYYY-MM-DD HH:mm:ss'),
     });
     await this.calculate(id);
     await this.scheduleRepository.delete({ order_id: id });
