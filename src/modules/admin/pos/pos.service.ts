@@ -37,10 +37,12 @@ export class AdminPosService {
     const { page = 1, limit = 50 } = query;
     const skip = (page - 1) * limit;
     const current = today();
+    const start = getStartOfDay(current);
+    const end = getEndOfDay(current);
     const [orders, total] = await this.orderService.getPaginated({
       where: {
         status: query.status,
-        created_at: Between(getStartOfDay(current), getEndOfDay(current)),
+        created_at: Between(start, end),
       },
       relations: ['items'],
       select: {
@@ -67,6 +69,8 @@ export class AdminPosService {
       total,
       more: skip + orders.length < total,
       current_date: current,
+      start_date: start,
+      end_date: end,
     };
   }
 }
