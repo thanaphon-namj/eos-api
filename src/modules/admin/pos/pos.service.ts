@@ -66,6 +66,7 @@ export class AdminPosService {
       data: orders,
       total,
       more: skip + orders.length < total,
+      current_date: current,
     };
   }
 }
