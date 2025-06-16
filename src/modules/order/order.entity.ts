@@ -40,10 +40,10 @@ export class Order {
   status: OrderStatus;
 
   @Column()
-  created_at: string;
+  created_at: Date;
 
   @Column()
-  updated_at: string;
+  updated_at: Date;
 
   @Column()
   admin_id: number;

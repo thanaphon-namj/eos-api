@@ -1,21 +1,27 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Bangkok');
 
 export const now = () => {
-  return dayjs().format('YYYY-MM-DD HH:mm:ss');
+  return dayjs.tz().toDate();
 };
 
 export const getStartOfDay = () => {
-  return dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss');
+  return dayjs.tz().startOf('day').toDate();
 };
 
 export const getEndOfDay = () => {
-  return dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+  return dayjs.tz().endOf('day').toDate();
 };
 
 export const addMinutes = (minutes: number) => {
-  return dayjs().add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
+  return dayjs.tz().add(minutes, 'minute').toDate();
 };
 
-export const isMoreThanOrEqual = (date: string, minutes: number) => {
-  return dayjs().diff(date, 'minute') >= minutes;
+export const isMoreThanOrEqual = (date: Date, minutes: number) => {
+  return dayjs.tz().diff(date, 'minute') >= minutes;
 };
