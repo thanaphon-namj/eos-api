@@ -82,10 +82,11 @@ export class OrderService {
   }
 
   async cancel(id: number, adminId?: number): Promise<boolean> {
-    const result = await this.orderRepository.update(id, {
+    const order = {
       status: OrderStatus.Cancelled,
-      admin_id: adminId,
-    });
+    };
+    if (adminId) order['admin_id'] = adminId;
+    const result = await this.orderRepository.update(id, order);
     return result.affected > 0;
   }
 

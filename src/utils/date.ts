@@ -23,5 +23,5 @@ export const addMinutes = (minutes: number) => {
 };
 
 export const isMoreThanOrEqual = (date: Date, minutes: number) => {
-  return dayjs.tz().diff(date, 'minute') >= minutes;
+  return dayjs.tz(date).isBefore(addMinutes(minutes));
 };
