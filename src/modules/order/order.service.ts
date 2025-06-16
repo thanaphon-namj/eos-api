@@ -8,11 +8,7 @@ import { Schedule, ScheduleStatus } from '../task/schedule.entity';
 import { OrderDto, OrderItemDto } from './dto/order.dto';
 import { generateCode } from '../../utils/generate';
 import { compareArray } from '../../utils/array';
-import dayjs, {
-  addMinutes,
-  getEndOfDay,
-  getStartOfDay,
-} from '../../utils/date';
+import { addMinutes, getEndOfDay, getStartOfDay, now } from '../../utils/date';
 
 @Injectable()
 export class OrderService {
@@ -41,7 +37,7 @@ export class OrderService {
     order.code = generateCode(previous ? previous.code : '0');
     order.name = orderDto.name;
     order.status = OrderStatus.Pending;
-    order.created_at = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
+    order.created_at = now();
     const result = await this.orderRepository.save(order);
     await this.createTask(result.id);
     return result;
@@ -62,7 +58,7 @@ export class OrderService {
   async confirm(id: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Confirmed,
-      updated_at: dayjs.tz().format('YYYY-MM-DD HH:mm:ss'),
+      updated_at: now(),
     });
     await this.calculate(id);
     await this.scheduleRepository.delete({ order_id: id });
