@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   InternalServerErrorException,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -62,7 +63,7 @@ export class OrderController {
 
   @Get(':id')
   async getById(@Param('id') id: string) {
-    return this.orderService.findOne({
+    const order = await this.orderService.findOne({
       where: {
         id: Number(id),
       },
@@ -109,11 +110,13 @@ export class OrderController {
         },
       },
     });
+    if (!order) throw new NotFoundException('Order not found.');
+    return order;
   }
 
   @Get(':id/status')
   async getStatus(@Param('id') id: string) {
-    return this.orderService.findOne({
+    const order = await this.orderService.findOne({
       where: {
         id: Number(id),
       },
@@ -122,6 +125,8 @@ export class OrderController {
         status: true,
       },
     });
+    if (!order) throw new NotFoundException('Order not found.');
+    return order;
   }
 
   @Put('item/:id')

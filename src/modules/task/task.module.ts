@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Schedule } from './schedule.entity';
 import { OrderModule } from '../order/order.module';
+import { SettingModule } from '../setting/setting.module';
 import { TaskService } from './task.service';
 
 @Module({
@@ -10,6 +11,7 @@ import { TaskService } from './task.service';
     TypeOrmModule.forFeature([Schedule]),
     ScheduleModule.forRoot(),
     OrderModule,
+    SettingModule,
   ],
   providers: [TaskService],
 })

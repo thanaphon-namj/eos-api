@@ -9,7 +9,11 @@ const DB_URL: string = process.env.DB_URL;
 const DB_PORT: number = parseInt(process.env.DB_PORT, 10) || 3306;
 const DB_USERNAME: string = process.env.DB_USERNAME || 'root';
 const DB_PASSWORD: string = process.env.DB_PASSWORD;
-const DB_NAME: string = process.env.DB_NAME || 'eos_db';
+const DB_NAME: string = process.env.DB_NAME || 'eosdb';
+
+// Facebook Page
+const FACEBOOK_APP_ID: string = process.env.FACEBOOK_APP_ID;
+const FACEBOOK_APP_SECRET: string = process.env.FACEBOOK_APP_SECRET;
 
 const DB = {
   HOST: DB_HOST,
@@ -25,4 +29,9 @@ const DB = {
 
 const SECRET_KEY: string = process.env.SECRET_KEY || 'SECRET_KEY';
 
-export { PORT, DB, SECRET_KEY };
+const FACEBOOK = {
+  APP_ID: FACEBOOK_APP_ID,
+  APP_SECRET: FACEBOOK_APP_SECRET,
+};
+
+export { PORT, DB, SECRET_KEY, FACEBOOK };

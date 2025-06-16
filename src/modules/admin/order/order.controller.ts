@@ -1,10 +1,12 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -12,6 +14,7 @@ import {
 import { AdminOrderService } from './order.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { QueryDto } from './dto/query.dto';
+import { OrderDto } from '../../order/dto/order.dto';
 
 @Controller('admin/order')
 export class AdminOrderController {
@@ -33,6 +36,19 @@ export class AdminOrderController {
     const success = await this.adminOrderService.complete(
       Number(id),
       req.user.sub,
+    );
+    if (success) {
+      return { success: true };
+    } else {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @Put(':id/discount')
+  async discount(@Param('id') id: string, @Body() order: OrderDto) {
+    const success = await this.adminOrderService.discount(
+      Number(id),
+      order.discount,
     );
     if (success) {
       return { success: true };

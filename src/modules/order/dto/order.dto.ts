@@ -2,6 +2,7 @@ import { OrderStatus } from '../order.entity';
 
 export interface OrderDto {
   name?: string;
+  discount?: number;
   status?: OrderStatus;
   admin_id?: number;
 }

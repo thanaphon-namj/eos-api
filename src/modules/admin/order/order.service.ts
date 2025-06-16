@@ -100,6 +100,10 @@ export class AdminOrderService {
     return this.orderService.complete(id, adminId);
   }
 
+  discount(id: number, discount: number): Promise<boolean> {
+    return this.orderService.discount(id, discount);
+  }
+
   cancel(id: number, adminId: number): Promise<boolean> {
     return this.orderService.cancel(id, adminId);
   }

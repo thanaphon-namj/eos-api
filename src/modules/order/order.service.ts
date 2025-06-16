@@ -80,6 +80,14 @@ export class OrderService {
     return result.affected > 0;
   }
 
+  async discount(id: number, discount: number): Promise<boolean> {
+    const result = await this.orderRepository.update(id, {
+      discount,
+    });
+    await this.calculate(id);
+    return result.affected > 0;
+  }
+
   async cancel(id: number, adminId?: number): Promise<boolean> {
     const result = await this.orderRepository.update(id, {
       status: OrderStatus.Cancelled,

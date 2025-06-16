@@ -4,6 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { In, Repository } from 'typeorm';
 import { Schedule, ScheduleStatus } from './schedule.entity';
 import { OrderService } from '../order/order.service';
+import { SettingService } from '../setting/setting.service';
 import { isMoreThanOrEqual } from '../../utils/date';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class TaskService {
     @InjectRepository(Schedule)
     private scheduleRepository: Repository<Schedule>,
     private orderService: OrderService,
+    private settingService: SettingService,
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
@@ -39,6 +41,20 @@ export class TaskService {
           });
         }
       }
+    }
+  }
+
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  async renewToken() {
+    try {
+      const success = await this.settingService.renewToken();
+      if (success) {
+        this.logger.log('Facebook token is renewed.');
+      } else {
+        this.logger.error('Facebook renew token is failed.');
+      }
+    } catch (error) {
+      this.logger.error(`Facebook renew token is failed: ${error}`);
     }
   }
 }
