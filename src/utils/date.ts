@@ -1,9 +1,11 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(isSameOrAfter);
 dayjs.tz.setDefault('Asia/Bangkok');
 
 export const now = () => {
@@ -19,9 +21,11 @@ export const getEndOfDay = () => {
 };
 
 export const addMinutes = (minutes: number) => {
-  return dayjs.tz().add(minutes, 'minute');
+  return dayjs.tz().add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
 };
 
-export const isMoreThanOrEqual = (date: string, minutes: number) => {
-  return dayjs.tz(date, 'YYYY-MM-DD HH:mm:ss').isBefore(addMinutes(minutes));
+export const isMoreThanOrEqual = (date: string) => {
+  return dayjs
+    .tz()
+    .isSameOrAfter(dayjs(date, 'YYYY-MM-DD HH:mm:ss', 'Asia/Bangkok'));
 };

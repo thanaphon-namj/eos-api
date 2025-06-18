@@ -27,7 +27,7 @@ export class TaskService {
       select: ['id', 'execute_time', 'order_id'],
     });
     for await (const schedule of schedules) {
-      if (isMoreThanOrEqual(schedule.execute_time, 15)) {
+      if (isMoreThanOrEqual(schedule.execute_time)) {
         try {
           await this.orderService.cancel(schedule.order_id);
           await this.scheduleRepository.update(schedule.id, {
