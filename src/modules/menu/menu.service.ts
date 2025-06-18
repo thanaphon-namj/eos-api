@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindManyOptions,
   FindOneOptions,
+  In,
   IsNull,
   Not,
   Repository,
@@ -138,11 +139,30 @@ export class MenuService {
       where: {
         option_id: id,
       },
-      select: ['id', 'name', 'additional_price', 'is_default'],
+      select: ['id'],
     });
-    if (!compareArray(choices, option.choices)) {
-      await this.menuOptionChoiceRepository.delete({ option_id: id });
+    const oldIds = choices.map((choice) => choice.id);
+    const newIds = option.choices.map((choice) => {
+      if (!choice.id) return null;
+      return choice.id;
+    });
+    if (compareArray(oldIds, newIds)) {
       for await (const choice of option.choices) {
+        await this.menuOptionChoiceRepository.update(choice.id, {
+          name: choice.name,
+          additional_price: choice.additional_price,
+          is_default: choice.is_default,
+        });
+      }
+    } else {
+      const deleteIds = oldIds.filter((id) => {
+        return !newIds.includes(id) && id !== null;
+      });
+      if (deleteIds.length > 0) {
+        await this.menuOptionChoiceRepository.delete({ id: In(deleteIds) });
+      }
+      const createChoices = option.choices.filter((choice) => !choice.id);
+      for await (const choice of createChoices) {
         const menuOptionChoice = new MenuOptionChoice();
         menuOptionChoice.name = choice.name;
         menuOptionChoice.additional_price = choice.additional_price;
