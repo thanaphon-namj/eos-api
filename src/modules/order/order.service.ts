@@ -226,7 +226,7 @@ export class OrderService {
 
   createTask(id: number) {
     const schedule = new Schedule();
-    schedule.execute_time = addMinutes(15);
+    schedule.execute_time = addMinutes(15).format('YYYY-MM-DD HH:mm:ss');
     schedule.status = ScheduleStatus.Pending;
     schedule.order_id = id;
     return this.scheduleRepository.save(schedule);

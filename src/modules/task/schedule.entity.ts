@@ -12,7 +12,7 @@ export class Schedule {
   id: number;
 
   @Column()
-  execute_time: Date;
+  execute_time: string;
 
   @Column()
   status: ScheduleStatus;

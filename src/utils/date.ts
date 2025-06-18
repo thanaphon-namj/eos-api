@@ -7,21 +7,21 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Bangkok');
 
 export const now = () => {
-  return dayjs.tz().toDate();
+  return dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const getStartOfDay = () => {
-  return dayjs.tz().startOf('day').toDate();
+  return dayjs.tz().startOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const getEndOfDay = () => {
-  return dayjs.tz().endOf('day').toDate();
+  return dayjs.tz().endOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const addMinutes = (minutes: number) => {
-  return dayjs.tz().add(minutes, 'minute').toDate();
+  return dayjs.tz().add(minutes, 'minute');
 };
 
-export const isMoreThanOrEqual = (date: Date, minutes: number) => {
-  return dayjs.tz(date).isBefore(addMinutes(minutes));
+export const isMoreThanOrEqual = (date: string, minutes: number) => {
+  return dayjs.tz(date, 'YYYY-MM-DD HH:mm:ss').isBefore(addMinutes(minutes));
 };
