@@ -24,6 +24,6 @@ export const addMinutes = (minutes: number) => {
   return dayjs.tz().add(minutes, 'minute').toDate();
 };
 
-export const isMoreThanOrEqual = (date: string) => {
+export const isMoreThanOrEqual = (date: Date) => {
   return dayjs.tz().isSameOrAfter(dayjs(date));
 };
