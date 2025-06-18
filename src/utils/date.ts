@@ -9,21 +9,21 @@ dayjs.extend(isSameOrAfter);
 dayjs.tz.setDefault('Asia/Bangkok');
 
 export const now = () => {
-  return dayjs(new Date()).tz().toDate();
+  return dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const getStartOfDay = () => {
-  return dayjs(new Date()).tz().startOf('day').toDate();
+  return dayjs.tz().startOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const getEndOfDay = () => {
-  return dayjs(new Date()).tz().endOf('day').toDate();
+  return dayjs.tz().endOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const addMinutes = (minutes: number) => {
-  return dayjs(new Date()).tz().add(minutes, 'minute').toDate();
+  return dayjs.tz().add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
 };
 
-export const isMoreThanOrEqual = (date: Date) => {
-  return dayjs(new Date()).tz().isSameOrAfter(dayjs(date));
+export const isMoreThanOrEqual = (date: Date | string) => {
+  return dayjs.tz().isSameOrAfter(dayjs.tz(date));
 };
