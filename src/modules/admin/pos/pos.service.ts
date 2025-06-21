@@ -51,6 +51,7 @@ export class AdminPosService {
         updated_at: true,
         items: {
           id: true,
+          quantity: true,
         },
       },
       order: {

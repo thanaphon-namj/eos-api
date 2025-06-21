@@ -52,6 +52,7 @@ export class OrderController {
         updated_at: true,
         items: {
           id: true,
+          quantity: true,
         },
       },
       order: {
