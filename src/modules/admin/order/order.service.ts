@@ -38,7 +38,6 @@ export class AdminOrderService {
       },
       order: {
         created_at: 'DESC',
-        updated_at: 'DESC',
       },
       skip,
       take: limit,
