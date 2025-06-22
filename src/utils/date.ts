@@ -15,8 +15,8 @@ export const getEndOfDay = () => {
   return dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss');
 };
 
-export const addMinutes = (minutes: number) => {
-  return dayjs().add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
+export const addMinutes = (date: Date | string, minutes: number) => {
+  return dayjs(date).add(minutes, 'minute').format('YYYY-MM-DD HH:mm:ss');
 };
 
 export const isMoreThanOrEqual = (date: Date | string) => {

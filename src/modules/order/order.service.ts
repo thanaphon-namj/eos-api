@@ -33,13 +33,14 @@ export class OrderService {
         code: 'DESC',
       },
     });
+    const current = now();
     const order = new Order();
     order.code = generateCode(previous ? previous.code : '0');
     order.name = orderDto.name;
     order.status = OrderStatus.Pending;
-    order.created_at = now();
+    order.created_at = current;
     const result = await this.orderRepository.save(order);
-    await this.createTask(result.id);
+    await this.createTask(result.id, current);
     return result;
   }
 
@@ -226,9 +227,9 @@ export class OrderService {
     return result.affected > 0;
   }
 
-  createTask(id: number) {
+  createTask(id: number, date: Date | string) {
     const schedule = new Schedule();
-    schedule.execute_time = addMinutes(15);
+    schedule.execute_time = addMinutes(date, 15);
     schedule.status = ScheduleStatus.Pending;
     schedule.order_id = id;
     return this.scheduleRepository.save(schedule);

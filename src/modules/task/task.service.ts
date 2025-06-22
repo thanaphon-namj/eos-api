@@ -19,6 +19,7 @@ export class TaskService {
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
+  // @Cron('*/5 8-20 * * *')
   async handleCron() {
     const schedules = await this.scheduleRepository.find({
       where: {
