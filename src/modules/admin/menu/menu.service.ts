@@ -22,7 +22,7 @@ export class AdminMenuService {
           parent_id: query.category_id,
         },
       },
-      select: ['id', 'name', 'image_url'],
+      select: ['id', 'name', 'image_url', 'status'],
       skip,
       take: limit,
     });
