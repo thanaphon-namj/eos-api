@@ -37,7 +37,7 @@ export class AdminOrderService {
         },
       },
       order: {
-        created_at: 'DESC',
+        id: 'DESC',
       },
       skip,
       take: limit,
