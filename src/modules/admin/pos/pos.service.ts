@@ -35,12 +35,10 @@ export class AdminPosService {
   async getInbox(query: QueryDto) {
     const { page = 1, limit = 50 } = query;
     const skip = (page - 1) * limit;
-    const created_at = Between(getStartOfDay(), getEndOfDay());
-    console.log(created_at.value);
     const [orders, total] = await this.orderService.getPaginated({
       where: {
         status: query.status,
-        created_at: created_at,
+        created_at: Between(getStartOfDay(), getEndOfDay()),
       },
       relations: ['items'],
       select: {
