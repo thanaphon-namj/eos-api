@@ -18,7 +18,7 @@ export class TaskService {
     private settingService: SettingService,
   ) {}
 
-  @Cron('0 */3 * * * *')
+  @Cron('*/2 * * * *')
   // @Cron('*/5 8-20 * * *')
   async handleCron() {
     const schedules = await this.scheduleRepository.find({
